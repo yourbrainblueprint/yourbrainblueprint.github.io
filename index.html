@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genius Power Hour GPT — Brain Blueprint for Creators™</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050a12;
+      --surface: #0b1624;
+      --border: #1a2d45;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --accent3: #22d3ee;
+      --text: #e2f0fb;
+      --muted: #5d7fa0;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background grid + particles ── */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(0,229,255,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(124,58,237,0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Page wrapper ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header badge ── */
+    header {
+      width: 100%;
+      padding: 28px 24px 0;
+      display: flex;
+      justify-content: center;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 100px;
+      padding: 6px 16px 6px 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      width: 100%;
+      max-width: 760px;
+      padding: 56px 24px 0;
+      text-align: center;
+      animation: fadeUp 0.9s 0.1s ease both;
+    }
+
+    .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    h1 .line-gph {
+      display: block;
+      background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h1 .line-sub {
+      display: block;
+      color: var(--text);
+    }
+
+    .hero-desc {
+      margin-top: 24px;
+      font-size: 1.15rem;
+      color: #8aafcc;
+      line-height: 1.7;
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── DNA divider ── */
+    .dna-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 44px auto 0;
+      max-width: 420px;
+      padding: 0 24px;
+      opacity: 0.45;
+    }
+
+    .dna-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+    .dna-icon { font-size: 18px; }
+
+    /* ── Feature pills ── */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 40px auto 0;
+      max-width: 640px;
+      padding: 0 24px;
+      animation: fadeUp 0.9s 0.25s ease both;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(11,22,36,0.9);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: #9fc5e0;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .pill:hover { border-color: var(--accent); color: var(--accent); }
+    .pill-icon { font-size: 14px; }
+
+    /* ── Card / Form ── */
+    .card-wrap {
+      width: 100%;
+      max-width: 520px;
+      padding: 0 24px;
+      margin: 52px auto 0;
+      animation: fadeUp 0.9s 0.35s ease both;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .card-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 28px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      background: rgba(5,10,18,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    .btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 16px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn .btn-shine {
+      position: absolute;
+      top: -50%; left: -60%;
+      width: 40%;
+      height: 200%;
+      background: rgba(255,255,255,0.12);
+      transform: skewX(-20deg);
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover .btn-shine { left: 130%; }
+
+    .privacy-note {
+      text-align: center;
+      margin-top: 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Success state ── */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      animation: popIn 0.5s ease both;
+    }
+
+    .success-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .success-desc {
+      color: #8aafcc;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .gpt-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      color: var(--bg);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 16px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+
+    .gpt-link-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+    .gpt-arrow { font-size: 18px; transition: transform 0.2s; }
+    .gpt-link-btn:hover .gpt-arrow { transform: translateX(3px); }
+
+    /* ── Social proof ── */
+    .proof-bar {
+      margin: 40px auto 0;
+      max-width: 480px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.9s 0.45s ease both;
+    }
+
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .proof-dot { width: 4px; height: 4px; background: var(--border); border-radius: 50%; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 64px;
+      padding: 28px 24px;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      opacity: 0.6;
+      animation: fadeUp 0.9s 0.55s ease both;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.6); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── Scanline effect on card ── */
+    .card-scan {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,229,255,0.008) 3px,
+        rgba(0,229,255,0.008) 4px
+      );
+      pointer-events: none;
+      border-radius: 20px;
+    }
+
+    /* ── Error msg ── */
+    .error-msg {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 6px;
+      font-family: 'Space Mono', monospace;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 20px; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="page">
+    <header>
+      <div class="brand-badge">
+        <span class="brand-dot"></span>
+        Brain Blueprint for Creators™
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Free Access · Powered by Brain Science</p>
+      <h1>
+        <span class="line-gph">Genius Power Hour™</span>
+        <span class="line-sub">Your Focus, Personalized.</span>
+      </h1>
+      <p class="hero-desc">
+        Get your personalized 90-minute focus session designed for your unique creative workflow challenge.
+        Brain-science-backed strategies that actually work.
+      </p>
+    </section>
+
+    <div class="dna-divider">
+      <div class="dna-line"></div>
+      <div class="dna-icon">🧬</div>
+      <div class="dna-line"></div>
+    </div>
+
+    <div class="features">
+      <div class="pill"><span class="pill-icon">🧠</span> Neuroscience-backed</div>
+      <div class="pill"><span class="pill-icon">⚡</span> Instant personalization</div>
+      <div class="pill"><span class="pill-icon">🎯</span> Built for creators</div>
+      <div class="pill"><span class="pill-icon">🔓</span> Completely free</div>
+    </div>
+
+    <div class="card-wrap">
+      <div class="card">
+        <div class="card-scan"></div>
+
+        <!-- Form state -->
+        <div id="form-state">
+          <div class="card-title">Access the GPT →</div>
+          <div class="card-sub">// Enter your details to unlock free access</div>
+
+          <form id="access-form" novalidate>
+            <div class="form-group">
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" placeholder="Your first name" autocomplete="given-name" required />
+              <div class="error-msg" id="name-error">Please enter your first name.</div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required />
+              <div class="error-msg" id="email-error">Please enter a valid email address.</div>
+            </div>
+            <button type="submit" class="btn">
+              <span class="btn-shine"></span>
+              Unlock My Genius Power Hour →
+            </button>
+          </form>
+
+          <p class="privacy-note">🔒 No spam. No selling. Just brain-optimized focus.</p>
+        </div>
+
+        <!-- Success state -->
+        <div id="success-state" class="success-state">
+          <div class="success-icon">🧠</div>
+          <div class="success-title">You're in, <span id="user-name"></span>!</div>
+          <div class="success-desc">
+            Your Genius Power Hour GPT is ready.<br/>
+            Click below to launch your personalized 90-minute focus session.
+          </div>
+          <a
+            href="https://chatgpt.com/g/g-6991445236248191a72cc02eb2480740-genius-power-hour-planner"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="gpt-link-btn"
+          >
+            Launch the GPT <span class="gpt-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="proof-bar">
+      <div class="proof-item">🧬 DNA-informed methodology</div>
+      <div class="proof-dot"></div>
+      <div class="proof-item">⚡ 90-min deep focus</div>
+      <div class="proof-dot"></div>
+      <div class="proof-item">🎯 Your workflow, your rules</div>
+    </div>
+
+    <footer>
+      © 2025 Brain Blueprint for Creators™ · All Rights Reserved
+      <br/><br/>
+      You're receiving this because you requested access to the Genius Power Hour GPT.
+      <br/>
+      <a href="*|UNSUB|*" style="color: var(--muted); text-decoration: underline;">Unsubscribe</a>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('access-form');
+    const formState = document.getElementById('form-state');
+    const successState = document.getElementById('success-state');
+    const userNameEl = document.getElementById('user-name');
+    const nameInput = document.getElementById('first-name');
+    const emailInput = document.getElementById('email');
+    const nameError = document.getElementById('name-error');
+    const emailError = document.getElementById('email-error');
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      let valid = true;
+
+      // Validate name
+      if (!name) {
+        nameError.style.display = 'block';
+        nameInput.style.borderColor = 'var(--error)';
+        valid = false;
+      } else {
+        nameError.style.display = 'none';
+        nameInput.style.borderColor = '';
+      }
+
+      // Validate email
+      if (!email || !isValidEmail(email)) {
+        emailError.style.display = 'block';
+        emailInput.style.borderColor = 'var(--error)';
+        valid = false;
+      } else {
+        emailError.style.display = 'none';
+        emailInput.style.borderColor = '';
+      }
+
+      if (!valid) return;
+
+      // ── Swap to success state ──
+      userNameEl.textContent = name.split(' ')[0];
+      formState.style.display = 'none';
+      successState.style.display = 'block';
+
+      // Optional: you can POST to a webhook here, e.g. Make.com
+      // fetch('YOUR_MAKE_COM_WEBHOOK_URL', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ name, email })
+      // });
+    });
+
+    // Clear errors on input
+    [nameInput, emailInput].forEach(input => {
+      input.addEventListener('input', () => {
+        input.style.borderColor = '';
+      });
+    });
+  </script>
+</body>
+</html>
