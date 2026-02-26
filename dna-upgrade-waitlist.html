@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNA Upgrade Waitlist — Brain Blueprint for Creators™</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050a12;
+      --surface: #0b1624;
+      --border: #1a2d45;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --accent3: #22d3ee;
+      --gold: #f59e0b;
+      --gold-light: #fcd34d;
+      --text: #e2f0fb;
+      --muted: #5d7fa0;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background ── */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 45% at 15% 15%, rgba(124,58,237,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 55% at 85% 80%, rgba(0,229,255,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(245,158,11,0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Page ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      padding: 28px 24px 0;
+      display: flex;
+      justify-content: center;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 100px;
+      padding: 6px 16px 6px 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: #a78bfa;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+      50% { opacity: 0.7; transform: scale(0.8); box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      width: 100%;
+      max-width: 780px;
+      padding: 52px 24px 0;
+      text-align: center;
+      animation: fadeUp 0.9s 0.1s ease both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 100px;
+      padding: 5px 14px;
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 6vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    h1 .line-top { display: block; color: var(--text); }
+    h1 .line-dna {
+      display: block;
+      background: linear-gradient(90deg, var(--gold), var(--accent2), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      margin-top: 22px;
+      font-size: 1.1rem;
+      color: #8aafcc;
+      line-height: 1.75;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-desc strong { color: var(--text); font-weight: 700; }
+
+    /* ── What you get section ── */
+    .what-section {
+      width: 100%;
+      max-width: 700px;
+      padding: 0 24px;
+      margin: 52px auto 0;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .benefit-card {
+      background: rgba(11,22,36,0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+
+    .benefit-card:hover {
+      border-color: rgba(124,58,237,0.4);
+      transform: translateY(-2px);
+    }
+
+    .benefit-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .benefit-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .benefit-text span {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── DNA divider ── */
+    .dna-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 48px auto 0;
+      max-width: 400px;
+      padding: 0 24px;
+      opacity: 0.35;
+    }
+
+    .dna-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .dna-icon { font-size: 18px; }
+
+    /* ── Form card ── */
+    .card-wrap {
+      width: 100%;
+      max-width: 500px;
+      padding: 0 24px;
+      margin: 48px auto 0;
+      animation: fadeUp 0.9s 0.35s ease both;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--accent2), var(--accent));
+    }
+
+    .card-scan {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(245,158,11,0.005) 3px,
+        rgba(245,158,11,0.005) 4px
+      );
+      pointer-events: none;
+      border-radius: 22px;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .card-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 28px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      background: rgba(5,10,18,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.08);
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    .btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 17px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      color: #0a0a0a;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn:hover { opacity: 0.92; transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn .btn-shine {
+      position: absolute;
+      top: -50%; left: -60%;
+      width: 35%;
+      height: 200%;
+      background: rgba(255,255,255,0.18);
+      transform: skewX(-20deg);
+      transition: left 0.55s ease;
+    }
+
+    .btn:hover .btn-shine { left: 130%; }
+
+    .privacy-note {
+      text-align: center;
+      margin-top: 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Error ── */
+    .error-msg {
+      color: var(--error);
+      font-size: 11px;
+      margin-top: 5px;
+      font-family: 'Space Mono', monospace;
+      display: none;
+    }
+
+    /* ── Success ── */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .success-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+      animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+    }
+
+    .success-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .success-title span {
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .success-desc {
+      color: #8aafcc;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 100px;
+      padding: 10px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--gold-light);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Urgency strip ── */
+    .urgency-strip {
+      width: 100%;
+      max-width: 500px;
+      padding: 0 24px;
+      margin: 20px auto 0;
+      animation: fadeUp 0.9s 0.4s ease both;
+    }
+
+    .urgency-inner {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.18);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: #9fc5e0;
+    }
+
+    .urgency-icon { font-size: 18px; flex-shrink: 0; }
+
+    .urgency-inner strong { color: var(--gold-light); }
+
+    /* ── Proof bar ── */
+    .proof-bar {
+      margin: 44px auto 0;
+      max-width: 520px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.9s 0.5s ease both;
+    }
+
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .proof-dot { width: 3px; height: 3px; background: var(--border); border-radius: 50%; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 60px;
+      padding: 28px 24px;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      opacity: 0.5;
+      animation: fadeUp 0.9s 0.6s ease both;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 20px; }
+      h1 { font-size: 2rem; }
+      .benefits-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="page">
+
+    <header>
+      <div class="brand-badge">
+        <span class="brand-dot"></span>
+        Brain Blueprint for Creators™ · Exclusive Access
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">🧬 Coming Soon · Limited Spots</div>
+      <h1>
+        <span class="line-top">Unlock Your Full</span>
+        <span class="line-dna">DNA-Powered Blueprint™</span>
+      </h1>
+      <p class="hero-desc">
+        Go beyond behavior-based insights. Upload your <strong>23andMe raw data</strong> and get a
+        precision report built on your <strong>actual genetics</strong> — your dopamine profile,
+        focus wiring, stress reactivity, energy metabolism, and peak performance windows.
+        <br/><br/>
+        <strong>This is your brain, explained by your DNA.</strong>
+      </p>
+    </section>
+
+    <!-- What you get -->
+    <div class="what-section">
+      <div class="section-label">// What the DNA Upgrade unlocks</div>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">⚡</div>
+          <div class="benefit-text">
+            <strong>Your Dopamine & Focus Profile</strong>
+            <span>How your brain wires motivation, creative drive, and deep work capacity.</span>
+          </div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🕐</div>
+          <div class="benefit-text">
+            <strong>Your Genetic Peak Performance Clock™</strong>
+            <span>Exact windows when your brain is built to do its best creative work.</span>
+          </div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🛡️</div>
+          <div class="benefit-text">
+            <strong>Stress Reactivity Blueprint</strong>
+            <span>Understand your cortisol & serotonin wiring — and how to protect your flow.</span>
+          </div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🔋</div>
+          <div class="benefit-text">
+            <strong>Mitochondrial Energy Map</strong>
+            <span>Why your energy crashes happen and the genetic fix for sustained stamina.</span>
+          </div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">☕</div>
+          <div class="benefit-text">
+            <strong>Caffeine Advantage Window™</strong>
+            <span>Your CYP1A2 metabolism type — when caffeine helps vs. hurts your output.</span>
+          </div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🧬</div>
+          <div class="benefit-text">
+            <strong>7-Day Genetic Activation Plan</strong>
+            <span>A personalized protocol to start living in alignment with your DNA immediately.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dna-divider">
+      <div class="dna-line"></div>
+      <div class="dna-icon">🧬</div>
+      <div class="dna-line"></div>
+    </div>
+
+    <!-- Card -->
+    <div class="card-wrap">
+      <div class="card">
+        <div class="card-scan"></div>
+
+        <!-- Form state -->
+        <div id="form-state">
+          <div class="card-title">Join the Waitlist →</div>
+          <div class="card-sub">// Be first to access · Early-bird pricing guaranteed</div>
+
+          <form id="waitlist-form" novalidate>
+            <div class="form-group">
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" placeholder="Your first name" autocomplete="given-name" required />
+              <div class="error-msg" id="name-error">Please enter your first name.</div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required />
+              <div class="error-msg" id="email-error">Please enter a valid email address.</div>
+            </div>
+            <button type="submit" class="btn">
+              <span class="btn-shine"></span>
+              🧬 Reserve My Spot on the Waitlist
+            </button>
+          </form>
+
+          <p class="privacy-note">🔒 No spam. No selling. Early-bird pricing locked in when you join.</p>
+        </div>
+
+        <!-- Success state -->
+        <div id="success-state" class="success-state">
+          <div class="success-icon">🧬</div>
+          <div class="success-title">You're on the list, <span id="user-name"></span>!</div>
+          <div class="success-desc">
+            You'll be among the first to know when the DNA Upgrade launches —
+            with <strong>early-bird pricing locked in</strong> just for you.
+            <br/><br/>
+            Watch your inbox for updates from Brain Blueprint for Creators™.
+          </div>
+          <div class="success-badge">
+            ✅ Waitlist Confirmed · Early-Bird Pricing Reserved
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Urgency strip -->
+    <div class="urgency-strip">
+      <div class="urgency-inner">
+        <div class="urgency-icon">⏳</div>
+        <div>Waitlist members receive <strong>early-bird pricing</strong> and <strong>first access</strong> when the DNA Upgrade opens. Spots are limited.</div>
+      </div>
+    </div>
+
+    <!-- Proof bar -->
+    <div class="proof-bar">
+      <div class="proof-item">🧬 23andMe raw data</div>
+      <div class="proof-dot"></div>
+      <div class="proof-item">🧠 Precision genetic insights</div>
+      <div class="proof-dot"></div>
+      <div class="proof-item">⚡ Not medical advice · Performance focused</div>
+    </div>
+
+    <footer>
+      © 2025 Brain Blueprint for Creators™ · All Rights Reserved<br/><br/>
+      You're receiving this because you joined the DNA Upgrade Waitlist.<br/>
+      <a href="*|UNSUB|*" style="color: var(--muted); text-decoration: underline;">Unsubscribe</a>
+    </footer>
+
+  </div>
+
+  <script>
+    const form = document.getElementById('waitlist-form');
+    const formState = document.getElementById('form-state');
+    const successState = document.getElementById('success-state');
+    const userNameEl = document.getElementById('user-name');
+    const nameInput = document.getElementById('first-name');
+    const emailInput = document.getElementById('email');
+    const nameError = document.getElementById('name-error');
+    const emailError = document.getElementById('email-error');
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      let valid = true;
+
+      if (!name) {
+        nameError.style.display = 'block';
+        nameInput.style.borderColor = 'var(--error)';
+        valid = false;
+      } else {
+        nameError.style.display = 'none';
+        nameInput.style.borderColor = '';
+      }
+
+      if (!email || !isValidEmail(email)) {
+        emailError.style.display = 'block';
+        emailInput.style.borderColor = 'var(--error)';
+        valid = false;
+      } else {
+        emailError.style.display = 'none';
+        emailInput.style.borderColor = '';
+      }
+
+      if (!valid) return;
+
+      // Send to Make.com → Google Sheets
+      fetch('https://hook.us2.make.com/qyltrwic31f7ata65v9ir7wx3fb903bm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, date: new Date().toISOString() })
+      });
+
+      // Show success
+      userNameEl.textContent = name.split(' ')[0];
+      formState.style.display = 'none';
+      successState.style.display = 'block';
+    });
+
+    [nameInput, emailInput].forEach(input => {
+      input.addEventListener('input', () => {
+        input.style.borderColor = '';
+      });
+    });
+  </script>
+</body>
+</html>
