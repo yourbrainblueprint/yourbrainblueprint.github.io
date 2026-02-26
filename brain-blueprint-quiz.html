@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brain Blueprint Quiz — Discover Your Brain Identity</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    :root {
+      --bg: #050a12;
+      --surface: #0b1624;
+      --surface2: #0e1c2e;
+      --border: #1a2d45;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --accent3: #22d3ee;
+      --text: #e2f0fb;
+      --muted: #5d7fa0;
+      --error: #ef4444;
+      --success: #10b981;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 45% at 15% 20%, rgba(0,229,255,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 55% at 85% 80%, rgba(124,58,237,0.08) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding-bottom: 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%; padding: 28px 24px 0;
+      display: flex; justify-content: center;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .brand-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 100px; padding: 6px 16px 6px 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--accent);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 6px; height: 6px; background: var(--accent);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.4; transform:scale(0.7); }
+    }
+
+    /* ── Screens ── */
+    .screen { display: none; width: 100%; max-width: 680px; padding: 0 24px; }
+    .screen.active { display: block; }
+
+    /* ── INTRO SCREEN ── */
+    #screen-intro {
+      text-align: center;
+      padding-top: 52px;
+      animation: fadeUp 0.9s 0.1s ease both;
+    }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; letter-spacing: 0.18em;
+      color: var(--muted); text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5.5vw, 3.4rem);
+      font-weight: 800; line-height: 1.08;
+      letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+
+    h1 .grad {
+      background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .intro-desc {
+      font-size: 1.05rem; color: #8aafcc; line-height: 1.75;
+      max-width: 520px; margin: 0 auto 36px;
+    }
+
+    .intro-desc strong { color: var(--text); }
+
+    .intro-meta {
+      display: flex; justify-content: center; gap: 28px;
+      flex-wrap: wrap; margin-bottom: 40px;
+    }
+
+    .meta-item {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--muted); letter-spacing: 0.05em;
+    }
+
+    .meta-icon { font-size: 15px; }
+
+    /* Name/email form on intro */
+    .intro-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px 32px;
+      position: relative; overflow: hidden;
+      text-align: left;
+    }
+
+    .intro-form::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+    }
+
+    .form-title {
+      font-size: 1.15rem; font-weight: 800;
+      color: var(--text); margin-bottom: 5px;
+    }
+
+    .form-sub {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      color: var(--muted); letter-spacing: 0.06em; margin-bottom: 24px;
+    }
+
+    .form-row-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+
+    label {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px;
+    }
+
+    input[type="text"], input[type="email"] {
+      background: rgba(5,10,18,0.8);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 13px 16px; font-family: 'Syne', sans-serif;
+      font-size: 14px; color: var(--text); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s; width: 100%;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    .err { color: var(--error); font-size: 11px; margin-top: 4px; font-family: 'Space Mono', monospace; display: none; }
+
+    .btn-primary {
+      width: 100%; margin-top: 8px; padding: 16px; border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #fff; font-family: 'Syne', sans-serif;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-shine {
+      position: absolute; top: -50%; left: -60%; width: 35%; height: 200%;
+      background: rgba(255,255,255,0.12); transform: skewX(-20deg);
+      transition: left 0.5s ease;
+    }
+    .btn-primary:hover .btn-shine { left: 130%; }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap {
+      width: 100%; max-width: 680px; padding: 32px 24px 0;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .progress-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress-label {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      color: var(--muted); letter-spacing: 0.08em;
+    }
+
+    .progress-bar-track {
+      height: 4px; background: var(--border); border-radius: 100px; overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      border-radius: 100px;
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+      width: 0%;
+    }
+
+    .section-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.15);
+      border-radius: 100px; padding: 5px 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; color: var(--accent);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 24px; margin-top: 28px;
+    }
+
+    /* ── QUIZ SCREEN ── */
+    #screen-quiz { padding-top: 8px; }
+
+    .question-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px 32px;
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .question-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+    }
+
+    .q-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px;
+    }
+
+    .q-text {
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--text); line-height: 1.45; margin-bottom: 8px;
+    }
+
+    .q-hint {
+      font-size: 12px; color: var(--muted);
+      font-style: italic; margin-bottom: 24px; line-height: 1.5;
+    }
+
+    .options { display: flex; flex-direction: column; gap: 10px; }
+
+    .option {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: rgba(5,10,18,0.6);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 18px; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    }
+
+    .option:hover {
+      border-color: rgba(0,229,255,0.4);
+      background: rgba(0,229,255,0.04);
+      transform: translateX(3px);
+    }
+
+    .option.selected {
+      border-color: var(--accent);
+      background: rgba(0,229,255,0.08);
+    }
+
+    .option.selected .opt-letter {
+      background: var(--accent); color: var(--bg);
+    }
+
+    .opt-letter {
+      flex-shrink: 0; width: 26px; height: 26px;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; font-weight: 700; color: var(--accent);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .opt-text { font-size: 14px; color: #9fc5e0; line-height: 1.5; padding-top: 3px; }
+
+    .nav-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 24px;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 22px; color: var(--muted);
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-next {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none; border-radius: 10px;
+      padding: 12px 28px; color: #fff;
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+      opacity: 0.4; pointer-events: none;
+    }
+
+    .btn-next.enabled { opacity: 1; pointer-events: all; }
+    .btn-next.enabled:hover { transform: translateY(-2px); }
+
+    .select-hint {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--muted); letter-spacing: 0.08em; text-align: center;
+      margin-top: 12px;
+    }
+
+    /* ── RESULT TEASER ── */
+    #screen-result {
+      padding-top: 52px; text-align: center;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .result-badge {
+      display: inline-block;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.25);
+      border-radius: 100px; padding: 8px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--accent);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .result-type {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 800; line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .result-type .type-name {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .result-desc {
+      font-size: 1rem; color: #8aafcc; line-height: 1.7;
+      max-width: 480px; margin: 0 auto 32px;
+    }
+
+    /* Lock card */
+    .lock-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px 32px;
+      text-align: left; position: relative; overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .lock-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #f59e0b, var(--accent2), var(--accent));
+    }
+
+    .lock-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+
+    .lock-icon { font-size: 28px; }
+
+    .lock-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .lock-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .report-contents {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px;
+    }
+
+    .report-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: rgba(5,10,18,0.5);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .ri-icon { font-size: 16px; flex-shrink: 0; }
+    .ri-text { font-size: 12px; color: #9fc5e0; line-height: 1.4; }
+    .ri-text strong { display: block; color: var(--text); font-size: 12px; margin-bottom: 1px; }
+
+    .price-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .price-tag {
+      display: flex; align-items: baseline; gap: 8px;
+    }
+
+    .price-amount {
+      font-size: 2.2rem; font-weight: 800; color: var(--text);
+    }
+
+    .price-desc { font-size: 13px; color: var(--muted); }
+
+    .price-note {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--muted); text-align: right;
+    }
+
+    /* Stripe Elements */
+    #payment-element-wrap { margin-bottom: 16px; }
+
+    #payment-element {
+      background: rgba(5,10,18,0.8);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    #payment-message {
+      color: var(--error); font-family: 'Space Mono', monospace;
+      font-size: 11px; margin-bottom: 12px; display: none;
+    }
+
+    .btn-pay {
+      width: 100%; padding: 17px; border: none; border-radius: 10px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0a0a0a; font-family: 'Syne', sans-serif;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-pay:hover { opacity: 0.92; transform: translateY(-2px); }
+    .btn-pay:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .secure-note {
+      text-align: center; margin-top: 12px;
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      color: var(--muted); letter-spacing: 0.05em;
+    }
+
+    /* ── SUCCESS ── */
+    #screen-success {
+      padding-top: 64px; text-align: center;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .success-glow {
+      font-size: 64px; margin-bottom: 20px;
+      animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+    }
+
+    .success-h { font-size: 2rem; font-weight: 800; margin-bottom: 10px; }
+    .success-h span {
+      background: linear-gradient(90deg, var(--success), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .success-p { color: #8aafcc; font-size: 1rem; line-height: 1.7; max-width: 460px; margin: 0 auto 32px; }
+
+    .success-steps { display: flex; flex-direction: column; gap: 12px; text-align: left; margin-bottom: 28px; }
+
+    .s-step {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: rgba(16,185,129,0.07);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 12px; padding: 14px 18px;
+    }
+
+    .s-num { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--success); font-weight: 700; flex-shrink: 0; }
+    .s-text { font-size: 13px; color: #9fc5e0; line-height: 1.5; }
+    .s-text strong { display: block; color: var(--text); margin-bottom: 2px; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 60px; padding: 24px;
+      text-align: center; font-family: 'Space Mono', monospace;
+      font-size: 10px; color: var(--muted); letter-spacing: 0.08em; opacity: 0.5;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes popIn { from { opacity:0; transform:scale(0.5); } to { opacity:1; transform:scale(1); } }
+
+    @media (max-width: 540px) {
+      .form-row-2 { grid-template-columns: 1fr; }
+      .report-contents { grid-template-columns: 1fr; }
+      .question-card, .intro-form, .lock-card { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="page">
+
+  <header>
+    <div class="brand-badge">
+      <span class="brand-dot"></span>
+      Brain Blueprint for Creators™
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1: INTRO
+  ═══════════════════════════════════════ -->
+  <div class="screen active" id="screen-intro">
+    <div class="eyebrow">🧠 5-Minute Assessment</div>
+    <h1>Discover Your<br/><span class="grad">Brain Identity™</span></h1>
+    <p class="intro-desc">
+      15 science-backed questions reveal how your brain is <strong>actually wired</strong> —
+      your dopamine profile, stress reactivity, energy patterns, and peak performance windows.
+      Get a <strong>personalized report</strong> built for your unique creative brain.
+    </p>
+    <div class="intro-meta">
+      <div class="meta-item"><span class="meta-icon">⏱</span> 5 minutes</div>
+      <div class="meta-item"><span class="meta-icon">🧬</span> Brain-science backed</div>
+      <div class="meta-item"><span class="meta-icon">📄</span> PDF report emailed to you</div>
+      <div class="meta-item"><span class="meta-icon">🔒</span> $27 one-time</div>
+    </div>
+
+    <div class="intro-form">
+      <div class="form-title">Let's get started →</div>
+      <div class="form-sub">// Enter your details, then take the quiz</div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="i-first">First Name <span style="color:var(--accent)">*</span></label>
+          <input type="text" id="i-first" placeholder="First name" />
+          <div class="err" id="err-first">Required</div>
+        </div>
+        <div class="form-group">
+          <label for="i-last">Last Name <span style="color:var(--accent)">*</span></label>
+          <input type="text" id="i-last" placeholder="Last name" />
+          <div class="err" id="err-last">Required</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label for="i-email">Email Address <span style="color:var(--accent)">*</span></label>
+        <input type="email" id="i-email" placeholder="you@email.com" />
+        <div class="err" id="err-email">Please enter a valid email</div>
+      </div>
+      <button class="btn-primary" id="btn-start-quiz">
+        <span class="btn-shine"></span>
+        Start My Quiz →
+      </button>
+      <p style="text-align:center;margin-top:12px;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);">
+        🔒 Your information is confidential. Report delivered via email after payment.
+      </p>
+    </div>
+  </div>
+
+  <!-- Progress (shown during quiz) -->
+  <div class="progress-wrap" id="progress-wrap" style="display:none;">
+    <div class="progress-top">
+      <span class="progress-label" id="progress-label">Question 1 of 15</span>
+      <span class="progress-label" id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 2: QUIZ
+  ═══════════════════════════════════════ -->
+  <div class="screen" id="screen-quiz">
+    <div class="section-badge" id="section-badge">🎯 Section 1: Focus & Attention</div>
+    <div class="question-card" id="question-card">
+      <!-- populated by JS -->
+    </div>
+    <div class="select-hint">Select an answer to continue</div>
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back">← Back</button>
+      <button class="btn-next" id="btn-next">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 3: RESULT TEASER + PAYMENT
+  ═══════════════════════════════════════ -->
+  <div class="screen" id="screen-result">
+    <div class="result-badge">🧠 Your Result Is Ready</div>
+    <div class="result-type">
+      You're a<br/>
+      <span class="type-name" id="result-type-name">Strategic Sprinter</span>
+    </div>
+    <p class="result-desc" id="result-type-desc">
+      Your full personalized report is ready — unlock it below.
+    </p>
+
+    <div class="lock-card">
+      <div class="lock-header">
+        <div class="lock-icon">🔒</div>
+        <div>
+          <div class="lock-title">Unlock Your Full Brain Blueprint Report</div>
+          <div class="lock-sub">8-page personalized PDF · Emailed instantly after payment</div>
+        </div>
+      </div>
+
+      <div class="report-contents">
+        <div class="report-item"><div class="ri-icon">⚡</div><div class="ri-text"><strong>Your Brain Identity</strong>Strengths, vulnerabilities & brain wiring</div></div>
+        <div class="report-item"><div class="ri-icon">🕐</div><div class="ri-text"><strong>Peak Performance Hours</strong>When to create, strategize & rest</div></div>
+        <div class="report-item"><div class="ri-icon">🎯</div><div class="ri-text"><strong>Your Focus Protocol</strong>Ideal session length & break cadence</div></div>
+        <div class="report-item"><div class="ri-icon">🔋</div><div class="ri-text"><strong>Energy Strategy</strong>Caffeine timing & crash prevention</div></div>
+        <div class="report-item"><div class="ri-icon">🛡️</div><div class="ri-text"><strong>Stress Reset Protocol</strong>Your personalized recovery system</div></div>
+        <div class="report-item"><div class="ri-icon">📈</div><div class="ri-text"><strong>7-Day Activation Plan</strong>Morning routine built for your brain</div></div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-tag">
+          <div class="price-amount">$27</div>
+          <div class="price-desc">one-time · instant delivery</div>
+        </div>
+        <div class="price-note">Secure payment<br/>via Stripe 🔒</div>
+      </div>
+
+      <div id="payment-message"></div>
+      <div id="payment-element-wrap">
+        <div id="payment-element"></div>
+      </div>
+      <button class="btn-pay" id="btn-pay">
+        🧠 Unlock My Report — $27
+      </button>
+      <p class="secure-note">256-bit SSL encryption · Powered by Stripe · No card data stored</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 4: SUCCESS
+  ═══════════════════════════════════════ -->
+  <div class="screen" id="screen-success">
+    <div class="success-glow">🧠</div>
+    <div class="success-h">You're all set, <span id="success-name"></span>!</div>
+    <p class="success-p">
+      Payment confirmed. Your personalized Brain Blueprint report is being generated right now
+      and will land in your inbox shortly. Check your spam folder if you don't see it within 10 minutes.
+    </p>
+    <div class="success-steps">
+      <div class="s-step">
+        <div class="s-num">01</div>
+        <div class="s-text"><strong>Check Your Inbox</strong>Your PDF report is on its way to <span id="success-email" style="color:var(--accent);"></span></div>
+      </div>
+      <div class="s-step">
+        <div class="s-num">02</div>
+        <div class="s-text"><strong>Start Your Genius Power Hour™</strong>Use your new report to protect your peak creative window starting tomorrow morning.</div>
+      </div>
+      <div class="s-step">
+        <div class="s-num">03</div>
+        <div class="s-text"><strong>Want More Precision?</strong>The DNA Upgrade confirms your behavioral results with your actual genetics. <a href="dna-upgrade-waitlist.html" style="color:var(--accent);">Join the waitlist →</a></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Brain Blueprint for Creators™ · All Rights Reserved<br/><br/>
+    <a href="*|UNSUB|*" style="color:var(--muted);text-decoration:underline;">Unsubscribe</a>
+  </footer>
+
+</div><!-- end .page -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// QUIZ DATA
+// ═══════════════════════════════════════════════════════════
+const SECTIONS = [
+  { label: '🎯 Section 1: Focus & Attention', qs: [0,1,2,3] },
+  { label: '⚡ Section 2: Energy & Metabolism', qs: [4,5,6] },
+  { label: '🛡️ Section 3: Stress & Recovery', qs: [7,8,9] },
+  { label: '📚 Section 4: Learning & Neuroplasticity', qs: [10,11] },
+  { label: '🌙 Section 5: Sleep & Recovery', qs: [12,13] },
+  { label: '🧠 Section 6: Behaviour Patterns', qs: [14] },
+];
+
+const QUESTIONS = [
+  // Q1
+  {
+    text: 'When do you feel most mentally sharp?',
+    hint: 'This reveals your chronotype + cortisol rhythm',
+    options: [
+      'Within 2 hours of waking up (morning peak)',
+      'Late morning to early afternoon (10am–2pm)',
+      'Late afternoon to evening (4pm–8pm)',
+      'Night time (after 8pm)',
+      'It varies wildly day to day',
+    ]
+  },
+  // Q2
+  {
+    text: 'After one interruption during focused work, how long does it take you to get back into flow?',
+    hint: 'This indicates dopamine clearance rate + task-switching cost',
+    options: [
+      '1–3 minutes — I bounce back quickly',
+      '5–10 minutes — I need a moment to reorient',
+      '15–30 minutes — It takes significant effort to rebuild focus',
+      'An hour or more — I basically have to start over',
+      "I can't get back in — the momentum is gone",
+    ]
+  },
+  // Q3
+  {
+    text: 'Which describes your natural work style?',
+    hint: 'Dopamine regulation + focus architecture',
+    options: [
+      'Short bursts of intense focus, then I need to switch tasks',
+      'Long, deep dives — I hate switching once I\'m in',
+      'I can do both depending on the task',
+      'I struggle with focus regardless of duration',
+      'I work best with constant variety and stimulation',
+    ]
+  },
+  // Q4
+  {
+    text: 'How do you feel about deadlines and time pressure?',
+    hint: 'Stress reactivity + dopamine under pressure',
+    options: [
+      'I thrive under pressure — it focuses me',
+      'Moderate pressure helps, but too much makes me freeze',
+      'Pressure makes me anxious and scattered',
+      'I completely shut down when rushed',
+      'I don\'t notice pressure much either way',
+    ]
+  },
+  // Q5
+  {
+    text: 'Caffeine makes me feel:',
+    hint: 'CYP1A2 caffeine metabolism indicator',
+    options: [
+      'Focused and energized with no downsides',
+      'Good in the moment, but anxious or jittery later',
+      'Wired but not productive — racing thoughts',
+      'Tired or has no effect',
+      "I don't consume caffeine",
+    ]
+  },
+  // Q6
+  {
+    text: 'After eating a meal heavy in carbs (pasta, bread, rice), I feel:',
+    hint: 'FTO gene / glucose metabolism indicator',
+    options: [
+      'Energized and ready to work',
+      'Fine — no noticeable change',
+      'A bit sleepy, but manageable',
+      'Very sleepy or foggy — I need a nap',
+      "I avoid carb-heavy meals because they wreck me",
+    ]
+  },
+  // Q7
+  {
+    text: 'My energy throughout the day typically:',
+    hint: 'Circadian + metabolic pattern',
+    options: [
+      'Starts high, stays steady all day',
+      'Starts high, dips in the afternoon, recovers in evening',
+      'Starts low, builds through the day, peaks at night',
+      "Crashes hard in the afternoon and doesn't recover",
+      'Unpredictable — varies wildly day to day',
+    ]
+  },
+  // Q8
+  {
+    text: "When I'm stressed, I tend to:",
+    hint: 'Stress response pattern',
+    options: [
+      'Get a racing mind — thoughts spiral and multiply',
+      "Freeze up — I can't think or decide anything",
+      'Get emotional — tears or frustration come quickly',
+      'Push harder — stress energizes me temporarily',
+      'Shut down completely — I need to escape',
+    ]
+  },
+  // Q9
+  {
+    text: 'To recover from stress, I need:',
+    hint: 'Social connection vs solitude indicator',
+    options: [
+      'To talk to someone I trust — connection helps me regulate',
+      'Complete solitude — I need to be alone to reset',
+      'Physical movement — walk, workout, or activity',
+      'Distraction — switch tasks or do something different',
+      "Sleep — I can't function until I rest",
+    ]
+  },
+  // Q10
+  {
+    text: 'Criticism or negative feedback:',
+    hint: 'Emotional reactivity / stress sensitivity',
+    options: [
+      "Doesn't bother me much — I can take it objectively",
+      'Stings in the moment but I move on quickly',
+      'Lingers in my mind for hours or days',
+      'Feels physically uncomfortable in my body',
+      'Can derail my entire day or week',
+    ]
+  },
+  // Q11
+  {
+    text: 'When learning something new, I:',
+    hint: 'BDNF / learning style indicator',
+    options: [
+      'Pick it up quickly with minimal repetition',
+      'Need to see it a few times before it sticks',
+      'Need structured repetition and review to really learn it',
+      'Learn best by doing, not watching or reading',
+      'Struggle to retain new information without constant reinforcement',
+    ]
+  },
+  // Q12
+  {
+    text: 'In stressful situations, my ability to learn or remember:',
+    hint: 'Stress impact on neuroplasticity',
+    options: [
+      'Actually improves — pressure helps me absorb info',
+      'Stays about the same',
+      'Decreases noticeably — my brain goes foggy',
+      'Shuts down completely — I retain nothing',
+      "I can't tell — it varies",
+    ]
+  },
+  // Q13
+  {
+    text: 'How much sleep do I genuinely need to feel my best?',
+    hint: 'Sleep architecture / recovery needs',
+    options: [
+      "6–7 hours — I'm good on less sleep",
+      '7–8 hours — pretty standard',
+      '8–9 hours — I need more than most people',
+      "9+ hours — I'm a long sleeper",
+      "It varies — I never feel fully rested",
+    ]
+  },
+  // Q14
+  {
+    text: 'My best creative ideas or problem-solving happens:',
+    hint: 'Creative cognition timing',
+    options: [
+      'First thing in the morning',
+      "Mid-morning after I've 'warmed up'",
+      'Afternoon or evening',
+      'Late at night',
+      'Randomly — no pattern',
+    ]
+  },
+  // Q15
+  {
+    text: 'Which statement feels MOST true for you?',
+    hint: 'Final tiebreaker for Brain Identity',
+    options: [
+      "I do my best work in intense sprints, then I need to switch or rest",
+      "I need long, uninterrupted blocks to do my best thinking",
+      "I'm adaptable — I can work in different ways depending on what's needed",
+      "I thrive on variety and switching between tasks keeps me energized",
+      "I struggle to find any work rhythm that feels natural",
+    ]
+  },
+];
+
+const TYPE_INFO = {
+  'Strategic Sprinter': {
+    desc: "You thrive in high-intensity bursts, are pressure-activated, and need strategic recovery windows. Your brain fires fast and hard — the key is channeling it.",
+  },
+  'Deep Focus Architect': {
+    desc: "You do your best work in long, uninterrupted blocks. Interruptions are costly for you. Your superpower is sustained depth — protect it fiercely.",
+  },
+  'Dynamic Innovator': {
+    desc: "You're fast-moving, adaptive, and energized by variety. You handle task-switching well and thrive when there's novelty in your work.",
+  },
+  'Steady Builder': {
+    desc: "Consistent, methodical, and stress-resilient. You build momentum through reliable routines and deliver your best work through steady, predictable systems.",
+  },
+  'Balanced Creator': {
+    desc: "Adaptable and versatile, you can shift between modes — but only when you choose to. Your edge is intentional flexibility, not reactive availability.",
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let state = {
+  firstName: '', lastName: '', email: '',
+  currentQ: 0,
+  answers: new Array(15).fill(null), // 'A'–'E'
+  founderType: '',
+};
+
+// ═══════════════════════════════════════════════════════════
+// SCORING
+// ═══════════════════════════════════════════════════════════
+function scoreToIndex(letter) {
+  return { A:0, B:1, C:2, D:3, E:4 }[letter] ?? 0;
+}
+
+function calculateType(answers) {
+  const a = answers.map(scoreToIndex); // 0–4
+
+  // Dopamine clearance (Q2, Q3, Q15)
+  const dopFast = [a[1]<=1, a[2]===0||a[2]===4, a[14]===0||a[14]===3].filter(Boolean).length;
+  const dopSlow = [a[1]>=2, a[2]===1, a[14]===1].filter(Boolean).length;
+  const dopBal  = [a[1]===1, a[2]===2, a[14]===2].filter(Boolean).length;
+
+  // Stress (Q4, Q8, Q10)
+  const stressHigh = [a[3]>=2, a[7]<=2||a[7]===4, a[9]>=2].filter(Boolean).length;
+  const stressLow  = [a[3]===0||a[3]===4, a[7]===3, a[9]<=1].filter(Boolean).length;
+
+  // Variety / novelty (Q15, Q3)
+  const novelty = a[14]===3 || a[2]===4;
+
+  // Scores per type
+  const scores = {
+    'Strategic Sprinter':  (dopFast>=2 ? 2:0) + (stressHigh>=2 ? 1:0) + (a[14]===0?1:0),
+    'Deep Focus Architect':(dopSlow>=2 ? 2:0) + (a[14]===1?1:0) + (a[2]===1?1:0),
+    'Dynamic Innovator':   (dopFast>=2 ? 1:0) + (novelty?2:0)   + (stressLow>=1?1:0),
+    'Steady Builder':      (dopBal>=2  ? 1:0) + (stressLow>=2?2:0) + (a[10]===1?1:0),
+    'Balanced Creator':    (dopBal>=1  ? 1:0) + (a[14]===2?2:0) + (a[2]===2?1:0),
+  };
+
+  // Tiebreak by Q15
+  const q15map = {0:'Strategic Sprinter',1:'Deep Focus Architect',2:'Balanced Creator',3:'Dynamic Innovator'};
+  let best = Object.entries(scores).sort((x,y)=>y[1]-x[1]);
+  if (best[0][1] === best[1][1] && q15map[a[14]]) return q15map[a[14]];
+  return best[0][0];
+}
+
+// ═══════════════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function getSectionForQ(qIdx) {
+  return SECTIONS.find(s => s.qs.includes(qIdx));
+}
+
+function renderQuestion(qIdx) {
+  const q = QUESTIONS[qIdx];
+  const letters = ['A','B','C','D','E'];
+  const section = getSectionForQ(qIdx);
+
+  document.getElementById('section-badge').textContent = section.label;
+  document.getElementById('progress-label').textContent = `Question ${qIdx+1} of 15`;
+  const pct = Math.round(((qIdx)/15)*100);
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+
+  const card = document.getElementById('question-card');
+  card.innerHTML = `
+    <div class="q-number">Question ${qIdx+1} of 15</div>
+    <div class="q-text">${q.text}</div>
+    ${q.hint ? `<div class="q-hint">${q.hint}</div>` : ''}
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <div class="option${state.answers[qIdx]===letters[i]?' selected':''}" data-letter="${letters[i]}">
+          <div class="opt-letter">${letters[i]}</div>
+          <div class="opt-text">${opt}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // Option click handlers
+  card.querySelectorAll('.option').forEach(el => {
+    el.addEventListener('click', () => {
+      state.answers[qIdx] = el.dataset.letter;
+      card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('btn-next').classList.add('enabled');
+    });
+  });
+
+  // Next button state
+  const nxt = document.getElementById('btn-next');
+  nxt.classList.toggle('enabled', state.answers[qIdx] !== null);
+  nxt.textContent = qIdx === 14 ? 'See My Results →' : 'Next →';
+
+  // Back button
+  document.getElementById('btn-back').style.visibility = qIdx === 0 ? 'hidden' : 'visible';
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTRO FORM
+// ═══════════════════════════════════════════════════════════
+document.getElementById('btn-start-quiz').addEventListener('click', () => {
+  const first = document.getElementById('i-first').value.trim();
+  const last  = document.getElementById('i-last').value.trim();
+  const email = document.getElementById('i-email').value.trim();
+  let ok = true;
+
+  const show = (id, show) => { document.getElementById(id).style.display = show ? 'block' : 'none'; };
+  const border = (id, err) => { document.getElementById(id).style.borderColor = err ? 'var(--error)' : ''; };
+
+  if (!first) { show('err-first',true); border('i-first',true); ok=false; } else { show('err-first',false); border('i-first',false); }
+  if (!last)  { show('err-last',true);  border('i-last',true);  ok=false; } else { show('err-last',false);  border('i-last',false); }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { show('err-email',true); border('i-email',true); ok=false; } else { show('err-email',false); border('i-email',false); }
+
+  if (!ok) return;
+
+  state.firstName = first; state.lastName = last; state.email = email;
+
+  document.getElementById('progress-wrap').style.display = 'block';
+  showScreen('screen-quiz');
+  renderQuestion(0);
+});
+
+// ═══════════════════════════════════════════════════════════
+// QUIZ NAVIGATION
+// ═══════════════════════════════════════════════════════════
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (!document.getElementById('btn-next').classList.contains('enabled')) return;
+
+  if (state.currentQ < 14) {
+    state.currentQ++;
+    renderQuestion(state.currentQ);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    // Finished — calculate type
+    state.founderType = calculateType(state.answers);
+    showResults();
+  }
+});
+
+document.getElementById('btn-back').addEventListener('click', () => {
+  if (state.currentQ > 0) {
+    state.currentQ--;
+    renderQuestion(state.currentQ);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// RESULTS + STRIPE
+// ═══════════════════════════════════════════════════════════
+let stripe, elements;
+
+async function showResults() {
+  document.getElementById('progress-wrap').style.display = 'none';
+  showScreen('screen-result');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const info = TYPE_INFO[state.founderType];
+  document.getElementById('result-type-name').textContent = state.founderType;
+  document.getElementById('result-type-desc').textContent = info.desc;
+
+  // Init Stripe
+  stripe = Stripe('pk_live_51SlZmrJYUj7nKDUAYnrVTanYkjNXzrbfUQ9K1J8j0PoNNw8M2zZF580YM6hUw2SOQOEOS9JOrwRXuY9WYEHcG5cA00vg3FFTyS');
+
+  try {
+    // Create PaymentIntent via Stripe — requires backend endpoint
+    // Since we can't call Stripe's server-side API from pure HTML,
+    // we use a lightweight approach: redirect to a hosted Stripe payment link
+    // OR use a pre-created Payment Link. Below we use a Payment Link approach
+    // with metadata passed via URL params. 
+    // 
+    // ⚠️ NOTE TO USER: Replace the fetch below with your own backend endpoint
+    // that creates a PaymentIntent and returns { clientSecret }.
+    // If you don't have a backend yet, use a Stripe Payment Link instead.
+    // See comment block at bottom of file for setup instructions.
+
+    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: 2700, // $27.00 in cents
+        currency: 'usd',
+        metadata: {
+          name: `${state.firstName} ${state.lastName}`,
+          email: state.email,
+          founder_type: state.founderType,
+        }
+      })
+    });
+
+    const { clientSecret } = await res.json();
+
+    elements = stripe.elements({ clientSecret, appearance: {
+      theme: 'night',
+      variables: {
+        colorPrimary: '#00e5ff',
+        colorBackground: '#050a12',
+        colorText: '#e2f0fb',
+        colorDanger: '#ef4444',
+        fontFamily: 'Syne, sans-serif',
+        borderRadius: '10px',
+      }
+    }});
+
+    const paymentEl = elements.create('payment');
+    paymentEl.mount('#payment-element');
+
+  } catch(err) {
+    // Fallback: show Stripe Payment Link button if no backend available
+    console.warn('No backend endpoint found. Falling back to Payment Link mode.');
+    showPaymentLinkFallback();
+  }
+}
+
+function showPaymentLinkFallback() {
+  // ── FALLBACK: Use a Stripe Payment Link ──
+  // Create a Payment Link in your Stripe Dashboard for $27
+  // Then replace the URL below with your actual payment link
+  // After payment, Stripe can redirect back to this page with ?payment=success
+  document.getElementById('payment-element-wrap').innerHTML = `
+    <div style="background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.2);border-radius:12px;padding:16px 18px;margin-bottom:16px;font-size:13px;color:#8aafcc;line-height:1.6;">
+      💡 <strong style="color:var(--text);">Secure Stripe Checkout</strong><br/>
+      Click below to complete your $27 payment securely via Stripe.
+      You'll be redirected back automatically after payment.
+    </div>
+  `;
+  document.getElementById('btn-pay').onclick = () => {
+    // Store quiz data in sessionStorage so we can send webhook after return
+    sessionStorage.setItem('bbq_data', JSON.stringify({
+      firstName: state.firstName,
+      lastName: state.lastName,
+      email: state.email,
+      answers: state.answers,
+      founderType: state.founderType,
+      date: new Date().toISOString(),
+    }));
+    // Replace this URL with your actual Stripe Payment Link
+    window.location.href = 'https://buy.stripe.com/YOUR_PAYMENT_LINK?prefilled_email=' + encodeURIComponent(state.email);
+  };
+}
+
+// ── Handle return from Stripe Payment Link ──
+(function checkPaymentReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') === 'success') {
+    const saved = sessionStorage.getItem('bbq_data');
+    if (saved) {
+      const d = JSON.parse(saved);
+      state = { ...state, ...d };
+      sessionStorage.removeItem('bbq_data');
+      fireWebhookAndShowSuccess();
+    }
+  }
+})();
+
+// ── Pay button (embedded checkout path) ──
+document.getElementById('btn-pay').addEventListener('click', async () => {
+  if (!stripe || !elements) return; // fallback mode handles its own click
+
+  const btn = document.getElementById('btn-pay');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  const { error } = await stripe.confirmPayment({
+    elements,
+    confirmParams: {
+      receipt_email: state.email,
+      return_url: window.location.href + '?payment=success',
+    },
+    redirect: 'if_required',
+  });
+
+  if (error) {
+    const msg = document.getElementById('payment-message');
+    msg.textContent = error.message;
+    msg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '🧠 Unlock My Report — $27';
+  } else {
+    fireWebhookAndShowSuccess();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// WEBHOOK + SUCCESS
+// ═══════════════════════════════════════════════════════════
+async function fireWebhookAndShowSuccess() {
+  const letters = ['A','B','C','D','E'];
+  const payload = {
+    date: new Date().toISOString(),
+    name: `${state.firstName} ${state.lastName}`,
+    email: state.email,
+    q1:  state.answers[0],
+    q2:  state.answers[1],
+    q3:  state.answers[2],
+    q4:  state.answers[3],
+    q5:  state.answers[4],
+    q6:  state.answers[5],
+    q7:  state.answers[6],
+    q8:  state.answers[7],
+    q9:  state.answers[8],
+    q10: state.answers[9],
+    q11: state.answers[10],
+    q12: state.answers[11],
+    q13: state.answers[12],
+    q14: state.answers[13],
+    q15: state.answers[14],
+  };
+
+  try {
+    await fetch('https://hook.us2.make.com/8b5ohohywjhlgaxba52cscjyh6oizull', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch(e) {
+    console.error('Webhook error:', e);
+  }
+
+  // Show success
+  document.getElementById('success-name').textContent = state.firstName;
+  document.getElementById('success-email').textContent = state.email;
+  document.getElementById('progress-wrap').style.display = 'none';
+  showScreen('screen-success');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+<!--
+═══════════════════════════════════════════════════════════════
+STRIPE SETUP INSTRUCTIONS
+═══════════════════════════════════════════════════════════════
+
+This quiz uses Stripe for the $27 payment. Two options:
+
+OPTION A — Stripe Payment Link (Easiest, no backend needed)
+────────────────────────────────────────────────────────────
+1. Go to dashboard.stripe.com → Payment Links → Create
+2. Create a $27 one-time product called "Brain Blueprint Report"
+3. Under "After payment" set redirect URL to:
+   https://YOUR-SITE.com/quiz.html?payment=success
+4. In the showPaymentLinkFallback() function above,
+   replace 'https://buy.stripe.com/YOUR_PAYMENT_LINK'
+   with your actual payment link URL
+5. Deploy — works with zero backend!
+
+OPTION B — Backend Endpoint (Full embedded checkout)
+────────────────────────────────────────────────────
+You need a small server endpoint at /create-payment-intent
+that accepts POST { amount, currency, metadata }
+and returns { clientSecret }.
+
+Simple Node.js example (Netlify/Vercel function):
+
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  exports.handler = async (event) => {
+    const { amount, currency, metadata } = JSON.parse(event.body);
+    const intent = await stripe.paymentIntents.create({ amount, currency, metadata });
+    return { statusCode: 200, body: JSON.stringify({ clientSecret: intent.client_secret }) };
+  };
+
+Set env var STRIPE_SECRET_KEY = your sk_live_... key.
+═══════════════════════════════════════════════════════════════
+-->
+</body>
+</html>
