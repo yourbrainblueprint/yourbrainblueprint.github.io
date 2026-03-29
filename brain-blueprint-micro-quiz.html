@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>What's Your Brain Type? — Brain Blueprint for Creators™</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #050a12;
+  --surface: #0b1624;
+  --surface2: #0e1c2e;
+  --border: #1a2d45;
+  --accent: #00e5ff;
+  --accent2: #7c3aed;
+  --accent3: #22d3ee;
+  --text: #e2f0fb;
+  --muted: #5d7fa0;
+  --error: #ef4444;
+  --success: #10b981;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.bg-grid {
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; z-index: 0;
+}
+.bg-glow {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 20%, rgba(0,229,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 85% 80%, rgba(124,58,237,0.08) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+.page {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding-bottom: 80px;
+}
+
+/* ── Header ── */
+header {
+  width: 100%; padding: 28px 24px 0;
+  display: flex; justify-content: center;
+  animation: fadeDown 0.8s ease both;
+}
+.brand-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,229,255,0.06);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 100px;
+  padding: 6px 16px 6px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--accent);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.brand-dot {
+  width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.4; transform:scale(0.7); }
+}
+
+/* ── Screens ── */
+.screen { display: none; width: 100%; max-width: 680px; padding: 0 24px; }
+.screen.active { display: block; }
+
+/* ── INTRO ── */
+#screen-intro {
+  text-align: center;
+  padding-top: 52px;
+  animation: fadeUp 0.9s 0.1s ease both;
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.free-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--success);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+h1 {
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  font-weight: 800; line-height: 1.08;
+  letter-spacing: -0.02em; margin-bottom: 16px;
+}
+h1 .grad {
+  background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.intro-desc {
+  font-size: 1.05rem; color: #8aafcc;
+  line-height: 1.75; max-width: 520px;
+  margin: 0 auto 36px;
+}
+.intro-desc strong { color: var(--text); }
+
+.meta-row {
+  display: flex; justify-content: center; gap: 24px;
+  flex-wrap: wrap; margin-bottom: 40px;
+}
+.meta-item {
+  display: flex; align-items: center; gap: 7px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.05em;
+}
+
+.btn-start {
+  display: inline-block;
+  padding: 18px 48px;
+  border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 800;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-bottom: 16px;
+}
+.btn-start:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-shine {
+  position: absolute; top: -50%; left: -60%;
+  width: 35%; height: 200%;
+  background: rgba(255,255,255,0.12);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+.btn-start:hover .btn-shine { left: 130%; }
+.start-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* type preview cards */
+.types-preview {
+  display: flex; gap: 8px;
+  flex-wrap: wrap; justify-content: center;
+  margin: 40px 0 0;
+}
+.type-chip {
+  background: rgba(0,229,255,0.05);
+  border: 1px solid rgba(0,229,255,0.15);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px; color: #8aafcc;
+  font-family: 'Space Mono', monospace;
+}
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  width: 100%; max-width: 680px;
+  padding: 32px 24px 0;
+  animation: fadeDown 0.6s ease both;
+}
+.progress-top {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 10px;
+}
+.progress-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.08em;
+}
+.progress-bar-track {
+  height: 4px; background: var(--border);
+  border-radius: 100px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  border-radius: 100px;
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  width: 0%;
+}
+
+/* ── QUIZ SCREEN ── */
+#screen-quiz { padding-top: 8px; }
+.section-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(0,229,255,0.06);
+  border: 1px solid rgba(0,229,255,0.15);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--accent);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 24px; margin-top: 28px;
+}
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 32px;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+.question-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+}
+.q-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px;
+}
+.q-text {
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--text); line-height: 1.45; margin-bottom: 8px;
+}
+.q-hint {
+  font-size: 12px; color: var(--muted);
+  font-style: italic; margin-bottom: 24px; line-height: 1.5;
+}
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: rgba(5,10,18,0.6);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 18px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+.option:hover { border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.04); transform: translateX(3px); }
+.option.selected { border-color: var(--accent); background: rgba(0,229,255,0.08); }
+.option.selected .opt-letter { background: var(--accent); color: var(--bg); }
+.opt-letter {
+  flex-shrink: 0; width: 26px; height: 26px;
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  transition: background 0.2s, color 0.2s;
+}
+.opt-text { font-size: 14px; color: #9fc5e0; line-height: 1.5; padding-top: 3px; }
+.nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+.btn-back {
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 22px;
+  color: var(--muted); font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-back:hover { border-color: var(--accent); color: var(--accent); }
+.btn-next {
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  border: none; border-radius: 10px; padding: 12px 28px;
+  color: #fff; font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  opacity: 0.4; pointer-events: none;
+}
+.btn-next.enabled { opacity: 1; pointer-events: all; }
+.btn-next.enabled:hover { transform: translateY(-2px); }
+.select-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.08em; text-align: center; margin-top: 12px;
+}
+
+/* ── RESULT SCREEN ── */
+#screen-result {
+  padding-top: 48px; text-align: center;
+  animation: fadeUp 0.6s ease both;
+}
+.result-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--success);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.result-type-label {
+  font-size: 13px; color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.result-type-name {
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  font-weight: 800; line-height: 1.05;
+  letter-spacing: -0.02em; margin-bottom: 24px;
+}
+.result-type-name .type-grad {
+  background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* Insight card */
+.insight-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative; overflow: hidden;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.insight-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--success), var(--accent), var(--accent2));
+}
+.insight-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--success);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 7px;
+}
+.insight-label::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--success); border-radius: 50%;
+  display: inline-block;
+}
+.insight-text {
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--text); line-height: 1.5;
+  margin-bottom: 16px;
+}
+.insight-sub {
+  font-size: 13px; color: #8aafcc; line-height: 1.65;
+}
+.insight-sub strong { color: var(--text); }
+
+/* Lock card — what's gated */
+.lock-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative; overflow: hidden;
+  text-align: left;
+  margin-bottom: 20px;
+}
+.lock-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, #f59e0b, var(--accent2), var(--accent));
+}
+.lock-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px;
+}
+.lock-icon { font-size: 26px; }
+.lock-title { font-size: 1.05rem; font-weight: 800; color: var(--text); line-height: 1.3; }
+.lock-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.locked-items {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 28px;
+}
+.locked-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(5,10,18,0.5);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  opacity: 0.7;
+  position: relative; overflow: hidden;
+}
+.locked-item::after {
+  content: '🔒';
+  position: absolute; top: 8px; right: 8px;
+  font-size: 10px; opacity: 0.5;
+}
+.li-icon { font-size: 15px; flex-shrink: 0; }
+.li-text { font-size: 12px; color: #9fc5e0; line-height: 1.4; }
+.li-text strong { display: block; color: var(--text); font-size: 12px; margin-bottom: 1px; }
+
+.price-banner {
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(0,229,255,0.08));
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+.price-left {}
+.price-amount { font-size: 2.4rem; font-weight: 800; color: var(--text); line-height: 1; }
+.price-period { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.price-right { text-align: right; }
+.price-includes {
+  font-size: 12px; color: #8aafcc; line-height: 1.7;
+}
+.price-includes span { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.price-includes span::before { content: '✓'; color: var(--success); font-weight: 700; }
+
+.btn-subscribe {
+  width: 100%; padding: 18px;
+  border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: #fff; font-family: 'Syne', sans-serif;
+  font-size: 17px; font-weight: 800;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-bottom: 12px;
+}
+.btn-subscribe:hover { opacity: 0.9; transform: translateY(-2px); }
+
+.btn-dna {
+  width: 100%; padding: 14px;
+  border: 1px solid rgba(124,58,237,0.4);
+  border-radius: 12px;
+  background: rgba(124,58,237,0.08);
+  color: #a78bfa; font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 14px;
+}
+.btn-dna:hover { border-color: rgba(124,58,237,0.7); background: rgba(124,58,237,0.14); }
+
+.secure-note {
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted); letter-spacing: 0.05em;
+}
+
+/* retake link */
+.retake {
+  margin-top: 24px; text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--muted);
+}
+.retake a { color: var(--muted); text-decoration: underline; cursor: pointer; }
+.retake a:hover { color: var(--accent); }
+
+/* ── Footer ── */
+footer {
+  margin-top: 60px; padding: 24px; text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.08em; opacity: 0.5;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(22px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@media (max-width: 540px) {
+  .locked-items { grid-template-columns: 1fr; }
+  .question-card, .insight-card, .lock-card { padding: 24px 18px; }
+  .price-banner { flex-direction: column; text-align: center; }
+  .price-includes span { justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="page">
+
+<header>
+  <div class="brand-badge">
+    <span class="brand-dot"></span>
+    Brain Blueprint for Creators™
+  </div>
+</header>
+
+<!-- ═══════════════════ INTRO ═══════════════════ -->
+<div class="screen active" id="screen-intro">
+  <div class="eyebrow">🧠 2-Minute Brain Type Quiz</div>
+  <div class="free-pill">✦ Completely Free</div>
+  <h1>What's Your<br/><span class="grad">Brain Type?</span></h1>
+  <p class="intro-desc">
+    5 questions reveal your <strong>neuroproductivity type</strong> — and the one insight about your brain that changes how you work forever.
+  </p>
+  <div class="meta-row">
+    <div class="meta-item">⏱ 2 minutes</div>
+    <div class="meta-item">🧬 Brain-science backed</div>
+    <div class="meta-item">✦ No email required</div>
+  </div>
+  <button class="btn-start" id="btn-begin">
+    <span class="btn-shine"></span>
+    Find My Brain Type →
+  </button>
+  <p class="start-note">No sign-up. Instant result.</p>
+  <div class="types-preview">
+    <div class="type-chip">Strategic Sprinter</div>
+    <div class="type-chip">Deep Focus Architect</div>
+    <div class="type-chip">Dynamic Innovator</div>
+    <div class="type-chip">Steady Builder</div>
+    <div class="type-chip">Balanced Creator</div>
+  </div>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-wrap" id="progress-wrap" style="display:none;">
+  <div class="progress-top">
+    <span class="progress-label" id="progress-label">Question 1 of 5</span>
+    <span class="progress-label" id="progress-pct">0%</span>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ QUIZ ═══════════════════ -->
+<div class="screen" id="screen-quiz">
+  <div class="section-badge" id="section-badge">🎯 About Your Brain</div>
+  <div class="question-card" id="question-card"></div>
+  <div class="select-hint">Select an answer to continue</div>
+  <div class="nav-row">
+    <button class="btn-back" id="btn-back">← Back</button>
+    <button class="btn-next" id="btn-next">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ RESULT ═══════════════════ -->
+<div class="screen" id="screen-result">
+  <div class="result-eyebrow">✦ Your Brain Type</div>
+  <div class="result-type-label">You are a</div>
+  <div class="result-type-name">
+    <span class="type-grad" id="result-name">Strategic Sprinter</span>
+  </div>
+
+  <!-- One free insight -->
+  <div class="insight-card">
+    <div class="insight-label">Your free insight</div>
+    <div class="insight-text" id="insight-headline"></div>
+    <div class="insight-sub" id="insight-body"></div>
+  </div>
+
+  <!-- Gated content -->
+  <div class="lock-card">
+    <div class="lock-header">
+      <div class="lock-icon">🔒</div>
+      <div>
+        <div class="lock-title">Your full Brain Blueprint Coach profile is ready</div>
+        <div class="lock-sub">Subscribe to unlock everything built for your brain type</div>
+      </div>
+    </div>
+    <div class="locked-items">
+      <div class="locked-item"><div class="li-icon">🕐</div><div class="li-text"><strong>Your exact peak hours</strong>When to create, strategize &amp; rest</div></div>
+      <div class="locked-item"><div class="li-icon">🎯</div><div class="li-text"><strong>Focus protocol</strong>Session length &amp; break cadence</div></div>
+      <div class="locked-item"><div class="li-icon">🔋</div><div class="li-text"><strong>Energy &amp; caffeine strategy</strong>Crash prevention &amp; timing</div></div>
+      <div class="locked-item"><div class="li-icon">🛡️</div><div class="li-text"><strong>Stress reset protocol</strong>Your personalized recovery system</div></div>
+      <div class="locked-item"><div class="li-icon">🤖</div><div class="li-text"><strong>AI coaching chat</strong>Your always-on brain coach</div></div>
+      <div class="locked-item"><div class="li-icon">📈</div><div class="li-text"><strong>7-day activation plan</strong>Built for your exact brain type</div></div>
+    </div>
+
+    <div class="price-banner">
+      <div class="price-left">
+        <div class="price-amount">$29<span style="font-size:1.2rem;font-weight:400;color:var(--muted)">/mo</span></div>
+        <div class="price-period">Brain Blueprint Coach</div>
+      </div>
+      <div class="price-right">
+        <div class="price-includes">
+          <span>Full protocol for your brain type</span>
+          <span>AI coach — chat anytime</span>
+          <span>Cancel anytime</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-subscribe" id="btn-subscribe" onclick="window.location.href='#subscribe'">
+      Unlock My Brain Blueprint Coach →
+    </button>
+
+    <button class="btn-dna" id="btn-dna" onclick="window.location.href='dna-upgrade-waitlist.html'">
+      🧬 Add DNA Precision — $49/mo · Upgrade anytime
+    </button>
+
+    <p class="secure-note">256-bit SSL · Powered by Stripe · Cancel anytime</p>
+  </div>
+
+  <div class="retake">
+    Not quite right? <a id="btn-retake">Retake the quiz</a>
+  </div>
+</div>
+
+<footer>
+  © 2026 Brain Blueprint for Creators™ · All Rights Reserved
+</footer>
+</div><!-- end .page -->
+
+<script>
+// ═══════════════════════════════════════
+// QUIZ DATA — 5 key questions
+// ═══════════════════════════════════════
+const QUESTIONS = [
+  {
+    text: 'When do you feel most mentally sharp?',
+    hint: 'Think about your natural energy — ignore what you think you should be',
+    options: [
+      'Within 2 hours of waking up',
+      'Late morning to early afternoon',
+      'Late afternoon to evening',
+      'Night time (after 8pm)',
+      'It varies wildly — no pattern',
+    ]
+  },
+  {
+    text: 'After one interruption during focused work, how long to get back into flow?',
+    hint: 'Be honest — this is one of the most revealing questions',
+    options: [
+      '1–3 minutes — I bounce back quickly',
+      '5–10 minutes — I need a moment',
+      '15–30 minutes — significant effort to rebuild',
+      'An hour or more — I basically start over',
+      "I can't get back in — momentum is gone",
+    ]
+  },
+  {
+    text: 'Which describes your natural work style most accurately?',
+    hint: 'Go with your gut — not what you wish was true',
+    options: [
+      'Short bursts of intense focus, then I switch',
+      'Long deep dives — I hate switching once I\'m in',
+      'I can do both depending on the task',
+      'I struggle with focus regardless of duration',
+      'Constant variety keeps me energized',
+    ]
+  },
+  {
+    text: 'When stressed, I tend to:',
+    hint: 'Your stress response reveals a lot about your neurochemistry',
+    options: [
+      'Get a racing mind — thoughts spiral',
+      'Freeze — I can\'t think or decide',
+      'Get emotional quickly',
+      'Push harder — stress activates me',
+      'Shut down and need to escape',
+    ]
+  },
+  {
+    text: 'Which feels most true about how you work best?',
+    hint: 'This is the one that ties it all together',
+    options: [
+      'Best work in intense sprints, then switch or rest',
+      'Need long uninterrupted blocks to think deeply',
+      'Adaptable — I shift between modes as needed',
+      'Variety and task-switching keeps me energized',
+      'I struggle to find any rhythm that feels natural',
+    ]
+  },
+];
+
+// ═══════════════════════════════════════
+// TYPE RESULTS — type name + free insight
+// ═══════════════════════════════════════
+const TYPES = {
+  'Strategic Sprinter': {
+    headline: "Your interruptions are costing you more than most people — by a factor of 10.",
+    body: "Your dopamine clearance is fast, which means you build focus quickly but <strong>lose it completely</strong> the moment you're pulled away. Most creators can recover in 5 minutes. For you, a single Slack notification during your peak window can cost 45 minutes of real output. <br><br>The unlock: one protected sprint per day, at the right time, is worth more to you than an entire scattered workday to anyone else.",
+  },
+  'Deep Focus Architect': {
+    headline: "You're being chronically under-protected — and it's slowly draining your best work.",
+    body: "Your brain builds concentration the way a tower is built — slowly, deliberately, one layer at a time. When it's interrupted, the whole structure collapses. <strong>Most productivity advice isn't designed for you.</strong> It assumes you can 'just get back into it' in a few minutes. You can't. <br><br>The unlock: depth-first scheduling isn't a luxury for you — it's the only system that works.",
+  },
+  'Dynamic Innovator': {
+    headline: "What everyone else calls 'distracted', you call your best work mode.",
+    body: "Your brain is wired for cross-pollination — it makes connections between ideas that single-task thinkers literally cannot see. <strong>The problem isn't your focus. It's that you're being forced into the wrong kind of focus.</strong> <br><br>The unlock: strategic task-switching isn't your weakness. Properly channeled, it's one of the rarest cognitive advantages in a creator's toolkit.",
+  },
+  'Steady Builder': {
+    headline: "You have something most high-performers don't — a natural stress buffer.",
+    body: "While others spike and crash, your neurochemistry runs on a longer, more reliable cycle. You don't need chaos to perform. <strong>But you do need consistency — and you're probably not protecting it.</strong> <br><br>The unlock: your edge isn't intensity. It's compounding. The creators who quietly outperform everyone else over 5 years usually have a brain exactly like yours.",
+  },
+  'Balanced Creator': {
+    headline: "Your flexibility is a superpower — but it comes with a hidden cost no one talks about.",
+    body: "You can shift between deep focus and rapid execution better than almost any other type. That's genuinely rare. <strong>But adaptability without structure becomes reactive availability.</strong> You end up being responsive to everyone else's agenda instead of your own. <br><br>The unlock: your brain type doesn't need a rigid system. It needs clear decision rules about when to flex and when to hold firm.",
+  },
+};
+
+// ═══════════════════════════════════════
+// SCORING
+// ═══════════════════════════════════════
+function calculateType(answers) {
+  // answers[0] = Q1 choice index (0–4)
+  // Map to letter scores for compatibility
+  const a = answers; // array of 0–4
+
+  // Dopamine signals
+  const dopFast = (a[1] <= 1) + (a[2] === 0 || a[2] === 4) + (a[4] === 0 || a[4] === 3);
+  const dopSlow = (a[1] >= 2) + (a[2] === 1) + (a[4] === 1);
+  const dopBal  = (a[1] === 1) + (a[2] === 2) + (a[4] === 2);
+
+  // Stress signals
+  const stressHigh = (a[3] <= 2 || a[3] === 4);
+  const stressLow  = (a[3] === 3);
+
+  // Novelty signal
+  const novelty = a[4] === 3 || a[2] === 4;
+
+  const scores = {
+    'Strategic Sprinter':   (dopFast >= 2 ? 2 : 0) + (stressHigh ? 1 : 0) + (a[4] === 0 ? 1 : 0),
+    'Deep Focus Architect': (dopSlow >= 2 ? 2 : 0) + (a[4] === 1 ? 1 : 0) + (a[2] === 1 ? 1 : 0),
+    'Dynamic Innovator':    (dopFast >= 2 ? 1 : 0) + (novelty ? 2 : 0) + (stressLow ? 1 : 0),
+    'Steady Builder':       (dopBal >= 2 ? 1 : 0)  + (stressLow ? 2 : 0) + (a[1] === 1 ? 1 : 0),
+    'Balanced Creator':     (dopBal >= 1 ? 1 : 0)  + (a[4] === 2 ? 2 : 0) + (a[2] === 2 ? 1 : 0),
+  };
+
+  // Q5 (index 4) tiebreak
+  const q5map = { 0: 'Strategic Sprinter', 1: 'Deep Focus Architect', 2: 'Balanced Creator', 3: 'Dynamic Innovator' };
+  const sorted = Object.entries(scores).sort((x,y) => y[1] - x[1]);
+  if (sorted[0][1] === sorted[1][1] && q5map[a[4]]) return q5map[a[4]];
+  return sorted[0][0];
+}
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let state = { currentQ: 0, answers: new Array(5).fill(null) };
+
+// ═══════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderQuestion(qIdx) {
+  const q = QUESTIONS[qIdx];
+  document.getElementById('progress-label').textContent = `Question ${qIdx + 1} of 5`;
+  const pct = Math.round((qIdx / 5) * 100);
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+
+  const letters = ['A','B','C','D','E'];
+  const card = document.getElementById('question-card');
+  card.innerHTML = `
+    <div class="q-number">Question ${qIdx + 1} of 5</div>
+    <div class="q-text">${q.text}</div>
+    ${q.hint ? `<div class="q-hint">${q.hint}</div>` : ''}
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <div class="option${state.answers[qIdx] === i ? ' selected' : ''}" data-idx="${i}">
+          <div class="opt-letter">${letters[i]}</div>
+          <div class="opt-text">${opt}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  card.querySelectorAll('.option').forEach(el => {
+    el.addEventListener('click', () => {
+      state.answers[qIdx] = parseInt(el.dataset.idx);
+      card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('btn-next').classList.add('enabled');
+    });
+  });
+
+  const nxt = document.getElementById('btn-next');
+  nxt.classList.toggle('enabled', state.answers[qIdx] !== null);
+  nxt.textContent = qIdx === 4 ? 'See My Brain Type →' : 'Next →';
+  document.getElementById('btn-back').style.visibility = qIdx === 0 ? 'hidden' : 'visible';
+}
+
+function showResult() {
+  const type = calculateType(state.answers);
+  const info = TYPES[type];
+  document.getElementById('result-name').textContent = type;
+  document.getElementById('insight-headline').textContent = info.headline;
+  document.getElementById('insight-body').innerHTML = info.body;
+  document.getElementById('progress-wrap').style.display = 'none';
+  showScreen('screen-result');
+}
+
+// ═══════════════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════════════
+document.getElementById('btn-begin').addEventListener('click', () => {
+  document.getElementById('progress-wrap').style.display = 'block';
+  showScreen('screen-quiz');
+  renderQuestion(0);
+});
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (!document.getElementById('btn-next').classList.contains('enabled')) return;
+  if (state.currentQ < 4) {
+    state.currentQ++;
+    renderQuestion(state.currentQ);
+  } else {
+    showResult();
+  }
+});
+
+document.getElementById('btn-back').addEventListener('click', () => {
+  if (state.currentQ > 0) {
+    state.currentQ--;
+    renderQuestion(state.currentQ);
+  }
+});
+
+document.getElementById('btn-retake').addEventListener('click', () => {
+  state = { currentQ: 0, answers: new Array(5).fill(null) };
+  document.getElementById('progress-wrap').style.display = 'none';
+  showScreen('screen-intro');
+});
+</script>
+</body>
+</html>

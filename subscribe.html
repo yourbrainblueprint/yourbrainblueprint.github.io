@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Brain Blueprint Coach™ — Your AI Neuroproductivity Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #050a12;
+  --surface: #0b1624;
+  --surface2: #0e1c2e;
+  --border: #1a2d45;
+  --accent: #00e5ff;
+  --accent2: #7c3aed;
+  --accent3: #22d3ee;
+  --text: #e2f0fb;
+  --muted: #5d7fa0;
+  --success: #10b981;
+  --amber: #f59e0b;
+  --error: #ef4444;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.bg-grid {
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; z-index: 0;
+}
+.bg-glow {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 20%, rgba(0,229,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 85% 80%, rgba(124,58,237,0.08) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+.page {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding-bottom: 100px;
+}
+
+/* ── Header ── */
+header {
+  width: 100%; padding: 28px 24px 0;
+  display: flex; justify-content: center;
+  animation: fadeDown 0.8s ease both;
+}
+.brand-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,229,255,0.06);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 100px;
+  padding: 6px 16px 6px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--accent);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.brand-dot {
+  width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.4; transform:scale(0.7); }
+}
+
+/* ── Section wrapper ── */
+.section {
+  width: 100%; max-width: 720px;
+  padding: 0 24px;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding-top: 60px;
+  animation: fadeUp 0.9s 0.1s ease both;
+}
+.eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5.5vw, 3.6rem);
+  font-weight: 800; line-height: 1.08;
+  letter-spacing: -0.02em; margin-bottom: 20px;
+}
+.hero h1 .grad {
+  background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-desc {
+  font-size: 1.1rem; color: #8aafcc;
+  line-height: 1.75; max-width: 560px;
+  margin: 0 auto 36px;
+}
+.hero-desc strong { color: var(--text); }
+
+/* Quiz result callout */
+.result-callout {
+  background: rgba(0,229,255,0.05);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 14px;
+  padding: 16px 22px;
+  display: inline-flex; align-items: center; gap: 12px;
+  margin-bottom: 40px;
+  font-size: 14px; color: #8aafcc;
+}
+.result-callout strong { color: var(--accent); }
+.result-callout .rc-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 52px auto; max-width: 420px; padding: 0 24px;
+  opacity: 0.35;
+  width: 100%;
+}
+.divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+.divider-icon { font-size: 16px; }
+
+/* ── PROBLEM SECTION ── */
+.problem-section { animation: fadeUp 0.9s 0.15s ease both; }
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 20px; text-align: center;
+}
+.problem-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 32px;
+}
+.problem-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  border-left: 2px solid var(--error);
+}
+.problem-card .pc-emoji { font-size: 20px; margin-bottom: 10px; }
+.problem-card .pc-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px;
+}
+.problem-card .pc-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+.problem-statement {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 14px; padding: 22px 24px;
+  font-size: 15px; color: #f0a0a0;
+  line-height: 1.7; text-align: center;
+}
+.problem-statement strong { color: #fca5a5; }
+
+/* ── SOLUTION SECTION ── */
+.solution-section { animation: fadeUp 0.9s 0.2s ease both; }
+.solution-intro {
+  text-align: center; margin-bottom: 32px;
+}
+.solution-title {
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  font-weight: 800; line-height: 1.15;
+  margin-bottom: 12px;
+}
+.solution-title .grad {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.solution-desc { font-size: 14px; color: #8aafcc; line-height: 1.7; max-width: 520px; margin: 0 auto; }
+
+/* What's inside */
+.inside-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 16px;
+}
+.inside-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.inside-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-2px); }
+.inside-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  opacity: 0.6;
+}
+.ic-icon { font-size: 22px; margin-bottom: 10px; }
+.ic-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.ic-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.ic-new {
+  display: inline-block;
+  background: rgba(0,229,255,0.1);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 100px; padding: 2px 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: var(--accent);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* ── DIFFERENTIATOR ── */
+.diff-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px;
+  position: relative; overflow: hidden;
+}
+.diff-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--success), var(--accent), var(--accent2));
+}
+.diff-title {
+  font-size: 1.1rem; font-weight: 800;
+  margin-bottom: 20px; color: var(--text);
+}
+.diff-rows { display: flex; flex-direction: column; gap: 10px; }
+.diff-row {
+  display: grid; grid-template-columns: 1fr 24px 1fr;
+  gap: 12px; align-items: center;
+}
+.diff-before {
+  background: rgba(239,68,68,0.07);
+  border: 1px solid rgba(239,68,68,0.15);
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; color: #f0a0a0;
+}
+.diff-after {
+  background: rgba(16,185,129,0.07);
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; color: #6ee7b7;
+}
+.diff-arrow {
+  text-align: center;
+  font-size: 14px; color: var(--muted);
+}
+
+/* ── SOCIAL PROOF ── */
+.proof-section { animation: fadeUp 0.9s 0.25s ease both; }
+.testimonial-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.testimonial {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+}
+.t-quote {
+  font-size: 13px; color: #9fc5e0;
+  line-height: 1.65; margin-bottom: 14px;
+  font-style: italic;
+}
+.t-quote::before { content: '"'; color: var(--accent); font-size: 20px; font-style: normal; line-height: 0; vertical-align: -4px; margin-right: 2px; }
+.t-author {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.06em;
+}
+.t-type {
+  display: inline-block;
+  background: rgba(0,229,255,0.08);
+  border-radius: 100px; padding: 2px 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: var(--accent);
+  margin-top: 6px; letter-spacing: 0.06em;
+}
+
+/* ── PRICING ── */
+.pricing-section { animation: fadeUp 0.9s 0.3s ease both; }
+.pricing-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 20px;
+}
+.pricing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.pricing-card.featured {
+  border-color: rgba(0,229,255,0.3);
+  background: rgba(0,229,255,0.03);
+}
+.pricing-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+}
+.pricing-card.featured::before {
+  background: linear-gradient(90deg, var(--success), var(--accent), var(--accent2));
+}
+.plan-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.plan-price {
+  display: flex; align-items: baseline; gap: 4px;
+  margin-bottom: 6px;
+}
+.plan-amount { font-size: 2.8rem; font-weight: 800; color: var(--text); }
+.plan-period { font-size: 14px; color: var(--muted); }
+.plan-tagline {
+  font-size: 12px; color: #8aafcc;
+  margin-bottom: 22px; line-height: 1.5;
+}
+.plan-features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.plan-feature {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 12px; color: #9fc5e0;
+}
+.plan-feature::before { content: '✓'; color: var(--success); font-weight: 700; flex-shrink: 0; }
+.plan-feature.locked { color: var(--muted); opacity: 0.5; }
+.plan-feature.locked::before { content: '✗'; color: var(--muted); }
+.plan-cta {
+  width: 100%; padding: 14px;
+  border-radius: 10px; border: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  position: relative; overflow: hidden;
+}
+.plan-cta.standard {
+  background: rgba(0,229,255,0.1);
+  border: 1px solid rgba(0,229,255,0.3);
+  color: var(--accent);
+}
+.plan-cta.standard:hover { background: rgba(0,229,255,0.18); }
+.plan-cta.dna {
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: #fff;
+}
+.plan-cta.dna:hover { opacity: 0.9; transform: translateY(-2px); }
+.plan-cta .btn-shine {
+  position: absolute; top: -50%; left: -60%;
+  width: 35%; height: 200%;
+  background: rgba(255,255,255,0.12);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+.plan-cta:hover .btn-shine { left: 130%; }
+.most-popular {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  border-radius: 100px; padding: 4px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: #fff;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Guarantee */
+.guarantee {
+  background: rgba(16,185,129,0.06);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 14px; padding: 20px 24px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.guarantee-icon { font-size: 28px; flex-shrink: 0; }
+.guarantee-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.guarantee-desc { font-size: 12px; color: #8aafcc; line-height: 1.6; }
+
+/* ── FAQ ── */
+.faq-section { animation: fadeUp 0.9s 0.35s ease both; }
+.faq-list { display: flex; flex-direction: column; gap: 10px; }
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+}
+.faq-q {
+  padding: 16px 20px;
+  font-size: 14px; font-weight: 700; color: var(--text);
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  transition: color 0.15s;
+}
+.faq-q:hover { color: var(--accent); }
+.faq-chevron { font-size: 12px; color: var(--muted); transition: transform 0.25s; }
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-a {
+  padding: 0 20px;
+  max-height: 0; overflow: hidden;
+  font-size: 13px; color: #8aafcc; line-height: 1.7;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+.faq-item.open .faq-a { max-height: 300px; padding: 0 20px 16px; }
+
+/* ── FINAL CTA ── */
+.final-cta {
+  text-align: center;
+  animation: fadeUp 0.9s 0.4s ease both;
+}
+.final-cta-title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800; line-height: 1.15;
+  margin-bottom: 12px;
+}
+.final-cta-title .grad {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.final-cta-desc {
+  font-size: 14px; color: #8aafcc;
+  line-height: 1.7; max-width: 480px;
+  margin: 0 auto 32px;
+}
+.cta-buttons {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 12px;
+}
+.btn-main {
+  display: inline-block;
+  padding: 18px 48px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  border: none; border-radius: 12px;
+  color: #fff; font-family: 'Syne', sans-serif;
+  font-size: 17px; font-weight: 800;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.btn-main:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-main .btn-shine {
+  position: absolute; top: -50%; left: -60%;
+  width: 35%; height: 200%;
+  background: rgba(255,255,255,0.12);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+.btn-main:hover .btn-shine { left: 130%; }
+.btn-secondary {
+  display: inline-block;
+  padding: 14px 36px;
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 12px;
+  color: #a78bfa; font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-secondary:hover { background: rgba(124,58,237,0.18); border-color: rgba(124,58,237,0.5); }
+.cta-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.05em; margin-top: 6px;
+}
+
+/* Section heading utility */
+.section-heading {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 800; line-height: 1.2;
+  margin-bottom: 10px; text-align: center;
+}
+.section-heading .grad {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.section-sub {
+  font-size: 14px; color: #8aafcc;
+  line-height: 1.7; max-width: 500px;
+  margin: 0 auto 28px; text-align: center;
+}
+
+/* Footer */
+footer {
+  margin-top: 64px; padding: 28px 24px;
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.08em; opacity: 0.6;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(22px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .problem-grid, .inside-grid, .pricing-grid, .testimonial-grid { grid-template-columns: 1fr; }
+  .diff-row { grid-template-columns: 1fr; }
+  .diff-arrow { display: none; }
+  .btn-main { padding: 16px 32px; font-size: 15px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="page">
+
+<header>
+  <div class="brand-badge">
+    <span class="brand-dot"></span>
+    Brain Blueprint for Creators™
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="section hero">
+  <p class="eyebrow">🧠 Your AI Neuroproductivity Coach</p>
+  <h1>
+    Stop working against<br/>
+    <span class="grad">your brain's wiring</span>
+  </h1>
+  <p class="hero-desc">
+    Generic productivity advice was built for an average brain. <strong>You don't have an average brain.</strong> Brain Blueprint Coach is the first AI coach that knows your exact neuroproductivity type — and gives you protocols that actually fit the way your brain works.
+  </p>
+  <div class="result-callout">
+    <div class="rc-dot"></div>
+    <span>Your quiz result is ready — <strong>unlock your full protocol below</strong></span>
+  </div>
+  <a href="#pricing" style="text-decoration:none;">
+    <button class="btn-main">
+      <span class="btn-shine"></span>
+      Unlock My Brain Blueprint Coach →
+    </button>
+  </a>
+  <p class="cta-note" style="margin-top:12px;">From $29/mo · Cancel anytime · No sales calls</p>
+</section>
+
+<!-- ═══ PROBLEM ═══ -->
+<div class="divider section"><div class="divider-line"></div><div class="divider-icon">⚡</div><div class="divider-line"></div></div>
+
+<section class="section problem-section">
+  <div class="section-label">// The problem with how creators work</div>
+  <div class="section-heading">Why most productivity advice <span class="grad">fails you</span></div>
+  <p class="section-sub">Every creator you follow is probably doing these four things. None of them were designed for your brain.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="pc-emoji">📚</div>
+      <div class="pc-title">Generic courses & frameworks</div>
+      <div class="pc-desc">Built for an "average" brain type that doesn't exist. If the advice worked, you wouldn't be searching for more.</div>
+    </div>
+    <div class="problem-card">
+      <div class="pc-emoji">📅</div>
+      <div class="pc-title">Time blocking that ignores biology</div>
+      <div class="pc-desc">Scheduling deep work at 2pm when your brain peaks at 8am. No wonder you feel broken.</div>
+    </div>
+    <div class="problem-card">
+      <div class="pc-emoji">☕</div>
+      <div class="pc-title">Caffeine advice that doesn't fit</div>
+      <div class="pc-desc">A slow metaboliser drinking coffee like a fast one. Your anxiety isn't weakness — it's wrong timing.</div>
+    </div>
+    <div class="problem-card">
+      <div class="pc-emoji">🔄</div>
+      <div class="pc-title">Recovery protocols built for others</div>
+      <div class="pc-desc">Some brains reset with solitude. Others need movement. Others need socialising. You've been using the wrong one.</div>
+    </div>
+  </div>
+
+  <div class="problem-statement">
+    The issue isn't your <strong>discipline</strong> or your <strong>work ethic</strong>.<br/>
+    It's that you've been running software built for someone else's hardware.
+  </div>
+</section>
+
+<!-- ═══ SOLUTION ═══ -->
+<div class="divider section"><div class="divider-line"></div><div class="divider-icon">🧠</div><div class="divider-line"></div></div>
+
+<section class="section solution-section">
+  <div class="solution-intro">
+    <div class="section-label">// What Brain Blueprint Coach gives you</div>
+    <div class="solution-title">Your own <span class="grad">neuroproductivity coach</span><br/>available 24/7</div>
+    <p class="section-sub">Not a generic chatbot. An AI coach that knows your brain type, your peak windows, your stress profile, your caffeine metabolism — and gives you advice built specifically for how your brain is actually wired.</p>
+  </div>
+
+  <div class="inside-grid">
+    <div class="inside-card">
+      <div class="ic-new">Core</div>
+      <div class="ic-icon">🤖</div>
+      <div class="ic-title">AI coaching chat</div>
+      <div class="ic-desc">Ask anything, anytime. "Plan my week," "I just crashed — help me reset," "Should I take caffeine now?" Your coach knows your type and answers accordingly.</div>
+    </div>
+    <div class="inside-card">
+      <div class="ic-new">Core</div>
+      <div class="ic-icon">⚡</div>
+      <div class="ic-title">Your full protocol</div>
+      <div class="ic-desc">Exact peak hours, ideal session length, break cadence, caffeine timing, stress reset system — all built specifically for your brain type.</div>
+    </div>
+    <div class="inside-card">
+      <div class="ic-new">Core</div>
+      <div class="ic-icon">📅</div>
+      <div class="ic-title">Daily schedule builder</div>
+      <div class="ic-desc">Ask your coach to build your ideal day. It'll create a schedule aligned to your chronotype, focus architecture, and energy pattern.</div>
+    </div>
+    <div class="inside-card">
+      <div class="ic-new">Core</div>
+      <div class="ic-icon">🛡️</div>
+      <div class="ic-title">Stress & recovery system</div>
+      <div class="ic-desc">When you're overwhelmed, your coach knows exactly how your type recovers. No guessing. No generic breathing exercises.</div>
+    </div>
+    <div class="inside-card">
+      <div class="ic-new">DNA tier</div>
+      <div class="ic-icon">🧬</div>
+      <div class="ic-title">Genetic precision layer</div>
+      <div class="ic-desc">Upload your 23andMe raw data. Your coach gets upgraded with your exact COMT, CYP1A2, CLOCK, OXTR, and BDNF variants for genetic-level accuracy.</div>
+    </div>
+    <div class="inside-card">
+      <div class="ic-new">DNA tier</div>
+      <div class="ic-icon">🔬</div>
+      <div class="ic-title">Confirmed vs. behavioral</div>
+      <div class="ic-desc">Your behavioral quiz is 80–90% accurate. DNA confirmation closes the gap — your coach knows whether your instincts match your actual genetics.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BEFORE / AFTER ═══ -->
+<div class="divider section"><div class="divider-line"></div><div class="divider-icon">🔄</div><div class="divider-line"></div></div>
+
+<section class="section">
+  <div class="section-label">// What changes</div>
+  <div class="section-heading" style="margin-bottom:20px;">Before vs. <span class="grad">after your Blueprint</span></div>
+  <div class="diff-card">
+    <div class="diff-title">The same creator. A different operating system.</div>
+    <div class="diff-rows">
+      <div class="diff-row">
+        <div class="diff-before">Scheduling deep work when your energy is lowest</div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-after">Protected Genius Power Hour at your biological peak</div>
+      </div>
+      <div class="diff-row">
+        <div class="diff-before">Caffeinating on someone else's schedule</div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-after">Caffeine timed to your exact metaboliser type</div>
+      </div>
+      <div class="diff-row">
+        <div class="diff-before">Beating yourself up for "losing focus" mid-afternoon</div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-after">Knowing that's your brain's natural dip — and protecting against it</div>
+      </div>
+      <div class="diff-row">
+        <div class="diff-before">Generic stress tips that don't work for you</div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-after">A reset protocol built for your specific stress response type</div>
+      </div>
+      <div class="diff-row">
+        <div class="diff-before">No coach you can ask at 11pm when you're spiralling</div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-after">AI coach available 24/7, knows your brain, knows what helps</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOCIAL PROOF ═══ -->
+<div class="divider section"><div class="divider-line"></div><div class="divider-icon">✦</div><div class="divider-line"></div></div>
+
+<section class="section proof-section">
+  <div class="section-label">// What creators are saying</div>
+  <div class="section-heading" style="margin-bottom:24px;">Built for brains like <span class="grad">yours</span></div>
+  <div class="testimonial-grid">
+    <div class="testimonial">
+      <div class="t-quote">I've tried every productivity system. Nothing stuck because none of them were built for how my brain actually works. This is the first thing that felt like it was written for me specifically.</div>
+      <div class="t-author">— Jamie R.</div>
+      <div class="t-type">Deep Focus Architect</div>
+    </div>
+    <div class="testimonial">
+      <div class="t-quote">The caffeine timing alone changed everything. I was dosing like a fast metaboliser and I'm not. Two weeks in and my afternoon crashes are basically gone.</div>
+      <div class="t-author">— Marcus T.</div>
+      <div class="t-type">Strategic Sprinter</div>
+    </div>
+    <div class="testimonial">
+      <div class="t-quote">I finally stopped feeling guilty for switching between projects. My coach told me that's literally how my brain is designed to work. I'm a Dynamic Innovator — that's not a flaw, it's a feature.</div>
+      <div class="t-author">— Priya S.</div>
+      <div class="t-type">Dynamic Innovator</div>
+    </div>
+    <div class="testimonial">
+      <div class="t-quote">Having a coach I can message at midnight when I'm stressed about a launch — and it actually knows my stress response type — that's worth $29 a month just by itself.</div>
+      <div class="t-author">— Alex K.</div>
+      <div class="t-type">Steady Builder</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRICING ═══ -->
+<div class="divider section"><div class="divider-line"></div><div class="divider-icon">💎</div><div class="divider-line"></div></div>
+
+<section class="section pricing-section" id="pricing">
+  <div class="section-label">// Choose your plan</div>
+  <div class="section-heading" style="margin-bottom:8px;">Start working <span class="grad">with your brain</span></div>
+  <p class="section-sub">Both plans include your complete neuroproductivity protocol and AI coaching chat. DNA Precision adds your genetic layer.</p>
+
+  <div class="pricing-grid">
+    <!-- Standard -->
+    <div class="pricing-card">
+      <div class="plan-name">Brain Blueprint Coach</div>
+      <div class="plan-price">
+        <span class="plan-amount">$29</span>
+        <span class="plan-period">/mo</span>
+      </div>
+      <div class="plan-tagline">Full protocol + AI coach for your behavioral brain type</div>
+      <div class="plan-features">
+        <div class="plan-feature">Complete neuroproductivity protocol for your type</div>
+        <div class="plan-feature">AI coaching chat — ask anything, anytime</div>
+        <div class="plan-feature">Peak hour identification + schedule builder</div>
+        <div class="plan-feature">Caffeine & energy strategy</div>
+        <div class="plan-feature">Stress reset protocol for your type</div>
+        <div class="plan-feature">Focus + recovery system</div>
+        <div class="plan-feature">7-day activation plan</div>
+        <div class="plan-feature locked">DNA precision layer</div>
+        <div class="plan-feature locked">Genetic marker confirmation</div>
+      </div>
+      <button class="plan-cta standard" onclick="window.location.href='#subscribe-standard'">
+        Start Standard — $29/mo
+      </button>
+    </div>
+
+    <!-- DNA -->
+    <div class="pricing-card featured">
+      <div class="most-popular">✦ Most complete</div>
+      <div class="plan-name">Brain Blueprint Coach · DNA Precision</div>
+      <div class="plan-price">
+        <span class="plan-amount">$49</span>
+        <span class="plan-period">/mo</span>
+      </div>
+      <div class="plan-tagline">Everything in Standard, plus your 23andMe genetic layer</div>
+      <div class="plan-features">
+        <div class="plan-feature">Everything in Standard</div>
+        <div class="plan-feature">Upload your 23andMe raw data</div>
+        <div class="plan-feature">COMT variant — exact dopamine clearance rate</div>
+        <div class="plan-feature">CYP1A2 — confirmed caffeine metaboliser type</div>
+        <div class="plan-feature">CLOCK genes — chronotype precision</div>
+        <div class="plan-feature">OXTR — stress reactivity threshold</div>
+        <div class="plan-feature">BDNF — learning & neuroplasticity type</div>
+        <div class="plan-feature">FTO — glucose & carb metabolism</div>
+      </div>
+      <button class="plan-cta dna" onclick="window.location.href='dna-upgrade-waitlist.html'">
+        <span class="btn-shine"></span>
+        Start DNA Precision — $49/mo
+      </button>
+    </div>
+  </div>
+
+  <!-- Guarantee -->
+  <div class="guarantee">
+    <div class="guarantee-icon">🛡️</div>
+    <div>
+      <div class="guarantee-title">Cancel anytime — no questions asked</div>
+      <div class="guarantee-desc">There are no contracts, no commitments, no calls to sit through. If Brain Blueprint Coach isn't the right fit for you, cancel in one click from your account settings. We'd rather earn your subscription every month than lock you in.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<div class="divider section"><div class="divider-line"></div><div class="divider-icon">❓</div><div class="divider-line"></div></div>
+
+<section class="section faq-section">
+  <div class="section-label">// Questions</div>
+  <div class="section-heading" style="margin-bottom:24px;">Everything you need to <span class="grad">know</span></div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Do I need to have taken the quiz first?
+        <span class="faq-chevron">▼</span>
+      </div>
+      <div class="faq-a">No — the quiz is part of your onboarding when you subscribe. You'll answer 5 quick questions inside the app that set up your coach profile. If you've already taken the quiz, those answers will seed your experience from the first message.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How is this different from just using ChatGPT?
+        <span class="faq-chevron">▼</span>
+      </div>
+      <div class="faq-a">ChatGPT gives generic advice to generic people. Brain Blueprint Coach is built on a specific system — your neuroproductivity type, your quiz answers, your protocol — and every response is tailored to your exact brain wiring. It also knows the Brain Blueprint methodology specifically, not just general productivity knowledge.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        What is the DNA Precision tier and do I need it?
+        <span class="faq-chevron">▼</span>
+      </div>
+      <div class="faq-a">The Standard tier is based on your behavioral profile — which is 80–90% accurate for most people. The DNA Precision tier adds your 23andMe raw data, which lets your coach confirm (or refine) your behavioral results with your actual genetics. It's not required — Standard is genuinely powerful on its own — but DNA Precision closes the remaining gap for those who want complete certainty.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Is my DNA data safe?
+        <span class="faq-chevron">▼</span>
+      </div>
+      <div class="faq-a">Your privacy is paramount. Raw DNA data is used only to generate your genetic insights and is never stored longer than 48 hours after processing. We follow strict data handling protocols and are fully GDPR compliant. Your data is never sold, shared, or used for any purpose other than personalising your coaching experience.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Can I upgrade from Standard to DNA Precision later?
+        <span class="faq-chevron">▼</span>
+      </div>
+      <div class="faq-a">Yes — you can upgrade anytime from within your account. You'll only pay the difference ($20/mo) and your DNA data can be uploaded immediately after upgrading. Many subscribers start on Standard and upgrade once they've seen how powerful the behavioral layer already is.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How many times can I use the coaching chat?
+        <span class="faq-chevron">▼</span>
+      </div>
+      <div class="faq-a">There's no daily limit on coaching conversations. Use it as much or as little as you want — first thing in the morning to plan your day, or late at night when you need a reset. The coach is built to be a daily tool, not a one-off resource.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FINAL CTA ═══ -->
+<div class="divider section"><div class="divider-line"></div><div class="divider-icon">🧠</div><div class="divider-line"></div></div>
+
+<section class="section final-cta">
+  <div class="final-cta-title">
+    Your brain has a<br/><span class="grad">right way to work.</span>
+  </div>
+  <p class="final-cta-desc">
+    Every day you spend working against your neuroproductivity type is output left on the table. Brain Blueprint Coach gives you the operating manual your brain came without.
+  </p>
+  <div class="cta-buttons">
+    <button class="btn-main" onclick="window.location.href='#pricing'">
+      <span class="btn-shine"></span>
+      Unlock My Brain Blueprint Coach →
+    </button>
+    <button class="btn-secondary" onclick="window.location.href='brain-blueprint-micro-quiz.html'">
+      Take the free quiz first
+    </button>
+    <p class="cta-note">From $29/mo · Cancel anytime · Instant access</p>
+  </div>
+</section>
+
+<footer>
+  © 2026 Brain Blueprint for Creators™ · All Rights Reserved<br/><br/>
+  <a href="brain-blueprint-micro-quiz.html" style="color:var(--muted);">Free Quiz</a> ·
+  <a href="dna-upgrade-waitlist.html" style="color:var(--muted);">DNA Precision</a> ·
+  <a href="brain-blueprint-coach.html" style="color:var(--muted);">Coach Dashboard</a>
+</footer>
+</div>
+
+<script>
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  // Open this one if it wasn't open
+  if (!isOpen) item.classList.add('open');
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+
+// Animate sections on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.style.opacity = '1';
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
