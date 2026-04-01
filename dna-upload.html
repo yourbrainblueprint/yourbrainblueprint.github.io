@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Upload Your DNA — Brain Blueprint Coach™</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #050a12; --surface: #0b1624; --surface2: #0e1c2e;
+  --border: #1a2d45; --accent: #00e5ff; --accent2: #7c3aed;
+  --accent3: #22d3ee; --text: #e2f0fb; --muted: #5d7fa0;
+  --success: #10b981; --error: #ef4444; --amber: #f59e0b;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden; }
+.bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; z-index: 0; }
+.bg-glow { position: fixed; inset: 0; background: radial-gradient(ellipse 55% 45% at 15% 20%, rgba(0,229,255,0.07) 0%, transparent 60%), radial-gradient(ellipse 50% 55% at 85% 80%, rgba(124,58,237,0.08) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+.page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; }
+
+header { width: 100%; padding: 28px 24px 0; display: flex; justify-content: center; animation: fadeDown 0.8s ease both; }
+.brand-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2); border-radius: 100px; padding: 6px 16px 6px 10px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+.brand-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.7); } }
+
+.hero { width: 100%; max-width: 640px; padding: 52px 24px 0; text-align: center; animation: fadeUp 0.9s 0.1s ease both; }
+.eyebrow { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; margin-bottom: 20px; }
+h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 14px; }
+h1 .grad { background: linear-gradient(90deg, var(--success), var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-desc { font-size: 1rem; color: #8aafcc; line-height: 1.75; max-width: 500px; margin: 0 auto 32px; }
+.hero-desc strong { color: var(--text); }
+
+/* Privacy banner */
+.privacy-banner { display: flex; align-items: flex-start; gap: 12px; background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; padding: 14px 18px; margin-bottom: 32px; text-align: left; }
+.privacy-icon { font-size: 20px; flex-shrink: 0; }
+.privacy-text { font-size: 12px; color: #6ee7b7; line-height: 1.6; }
+.privacy-text strong { display: block; color: var(--success); margin-bottom: 2px; font-size: 13px; }
+
+/* Upload card */
+.upload-wrap { width: 100%; max-width: 580px; padding: 0 24px; margin: 0 auto; animation: fadeUp 0.9s 0.2s ease both; }
+.upload-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 36px 32px; position: relative; overflow: hidden; }
+.upload-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--success), var(--accent), var(--accent2)); }
+
+.form-title { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 5px; }
+.form-sub { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 28px; }
+
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+.form-input, .form-select { width: 100%; background: rgba(5,10,18,0.8); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; font-family: 'Syne', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color 0.2s; }
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--muted); }
+.form-select option { background: #0b1624; }
+
+/* Drop zone */
+.drop-zone { border: 2px dashed rgba(0,229,255,0.25); border-radius: 14px; padding: 40px 24px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 16px; position: relative; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(0,229,255,0.04); }
+.drop-zone.has-file { border-color: var(--success); background: rgba(16,185,129,0.05); }
+.dz-icon { font-size: 36px; margin-bottom: 12px; }
+.dz-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.dz-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.dz-file-name { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--success); margin-top: 10px; }
+#file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+
+/* Or paste */
+.or-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
+.or-line { flex: 1; height: 1px; background: var(--border); }
+.or-text { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+.dna-textarea { width: 100%; background: rgba(5,10,18,0.8); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); outline: none; transition: border-color 0.2s; resize: vertical; min-height: 100px; line-height: 1.6; margin-bottom: 16px; }
+.dna-textarea:focus { border-color: var(--accent); color: var(--text); }
+.dna-textarea::placeholder { color: var(--muted); opacity: 0.6; }
+
+.btn-submit { width: 100%; padding: 17px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--success), #059669); color: #fff; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; cursor: pointer; position: relative; overflow: hidden; transition: opacity 0.2s, transform 0.15s; }
+.btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-shine { position: absolute; top: -50%; left: -60%; width: 35%; height: 200%; background: rgba(255,255,255,0.12); transform: skewX(-20deg); transition: left 0.5s ease; }
+.btn-submit:hover .btn-shine { left: 130%; }
+
+.secure-note { text-align: center; margin-top: 12px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.05em; }
+
+/* How to get your data */
+.how-section { width: 100%; max-width: 580px; padding: 0 24px; margin: 32px auto 0; animation: fadeUp 0.9s 0.3s ease both; }
+.how-title { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 16px; text-align: center; }
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step { display: flex; align-items: flex-start; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.how-num { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.how-text { font-size: 13px; color: #9fc5e0; line-height: 1.5; }
+.how-text strong { display: block; color: var(--text); margin-bottom: 2px; }
+.how-text a { color: var(--accent); }
+
+/* Processing state */
+.processing-state { display: none; text-align: center; padding: 20px 0; }
+.processing-spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.processing-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.processing-sub { font-size: 13px; color: var(--muted); }
+
+/* Result state */
+.result-state { display: none; }
+.result-header { text-align: center; margin-bottom: 28px; }
+.result-icon { font-size: 52px; margin-bottom: 16px; }
+.result-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+.result-title span { background: linear-gradient(90deg, var(--success), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.result-desc { font-size: 13px; color: #8aafcc; line-height: 1.7; }
+
+.gene-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.gene-card { background: rgba(5,10,18,0.5); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.gene-name { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+.gene-trait { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.gene-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.gene-detail { font-size: 11px; color: #8aafcc; line-height: 1.5; }
+.gene-genotype { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 6px; }
+
+.btn-coach { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent2), var(--accent)); border: none; border-radius: 10px; color: #fff; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; text-align: center; text-decoration: none; transition: opacity 0.2s, transform 0.15s; }
+.btn-coach:hover { opacity: 0.9; transform: translateY(-2px); }
+
+footer { margin-top: 60px; padding: 24px; text-align: center; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; opacity: 0.5; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+
+@media (max-width: 540px) {
+  .upload-card { padding: 24px 18px; }
+  .gene-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="page">
+
+<header>
+  <div class="brand-badge">
+    <span class="brand-dot"></span>
+    Brain Blueprint Coach™ · DNA Precision
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">🧬 DNA Precision Upgrade</div>
+  <h1>Upload Your<br/><span class="grad">23andMe Data</span></h1>
+  <p class="hero-desc">
+    Your behavioral profile is 80–90% accurate. Your DNA closes the gap. Upload your raw data file and your AI coach upgrades instantly to <strong>genetic-level precision</strong>.
+  </p>
+  <div class="privacy-banner">
+    <div class="privacy-icon">🔒</div>
+    <div class="privacy-text">
+      <strong>Your privacy is protected</strong>
+      Your raw DNA file is parsed in seconds and immediately discarded — never stored. Only the 8 specific gene variants relevant to your performance are saved. Full GDPR compliance.
+    </div>
+  </div>
+</section>
+
+<!-- Upload form -->
+<div class="upload-wrap">
+  <div class="upload-card">
+
+    <!-- Form state -->
+    <div id="form-state">
+      <div class="form-title">Upload your raw DNA data →</div>
+      <div class="form-sub">// Processed in seconds · Results saved to your coach profile</div>
+
+      <div class="form-group">
+        <label class="form-label">Your email address</label>
+        <input type="email" class="form-input" id="input-email" placeholder="you@email.com" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your name</label>
+        <input type="text" class="form-input" id="input-name" placeholder="Your first name" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your brain type</label>
+        <select class="form-select" id="input-type">
+          <option value="">Select your brain type</option>
+          <option>Strategic Sprinter</option>
+          <option>Deep Focus Architect</option>
+          <option>Dynamic Innovator</option>
+          <option>Steady Builder</option>
+          <option>Balanced Creator</option>
+        </select>
+      </div>
+
+      <label class="form-label">Your 23andMe raw data file</label>
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept=".txt,.zip" />
+        <div class="dz-icon">🧬</div>
+        <div class="dz-title">Drop your file here</div>
+        <div class="dz-sub">23andMe raw data .txt file<br/>or click to browse</div>
+        <div class="dz-file-name" id="file-name"></div>
+      </div>
+
+      <div class="or-divider">
+        <div class="or-line"></div>
+        <div class="or-text">or paste raw data</div>
+        <div class="or-line"></div>
+      </div>
+
+      <textarea class="dna-textarea" id="dna-paste" placeholder="# This data file generated by 23andMe...&#10;rsid	chromosome	position	genotype&#10;rs4680	22	19963748	AG&#10;..."></textarea>
+
+      <button class="btn-submit" id="btn-submit" onclick="submitDNA()">
+        <span class="btn-shine"></span>
+        🧬 Analyse My DNA →
+      </button>
+      <p class="secure-note">🔒 Raw data never stored · Processed in seconds · GDPR compliant</p>
+    </div>
+
+    <!-- Processing state -->
+    <div class="processing-state" id="processing-state">
+      <div class="processing-spinner"></div>
+      <div class="processing-title">Analysing your DNA...</div>
+      <div class="processing-sub">Scanning for 8 key performance markers.<br/>This takes about 5 seconds.</div>
+    </div>
+
+    <!-- Result state -->
+    <div class="result-state" id="result-state">
+      <div class="result-header">
+        <div class="result-icon">🧬</div>
+        <div class="result-title">Your genetic profile is <span>confirmed</span></div>
+        <div class="result-desc">Your Brain Blueprint Coach has been upgraded. Every coaching conversation now uses your confirmed genetic data instead of behavioral estimates.</div>
+      </div>
+      <div class="gene-grid" id="gene-grid"></div>
+      <a href="brain-blueprint-coach.html" class="btn-coach">
+        Open Your Upgraded Coach →
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- How to get your data -->
+<div class="how-section">
+  <div class="how-title">// How to download your 23andMe raw data</div>
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="how-num">01</div>
+      <div class="how-text">
+        <strong>Log into 23andMe</strong>
+        Go to <a href="https://www.23andme.com" target="_blank">23andme.com</a> and sign in to your account
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">02</div>
+      <div class="how-text">
+        <strong>Go to Browse Raw Data</strong>
+        Click your name → Settings → 23andMe Data → Download Raw Data
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">03</div>
+      <div class="how-text">
+        <strong>Download All DNA</strong>
+        Select "All DNA" and click Download. You'll receive a .zip file containing a .txt file.
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">04</div>
+      <div class="how-text">
+        <strong>Upload the .txt file here</strong>
+        Extract the .zip and upload the .txt file above. We only read 8 specific lines — nothing else.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 Brain Blueprint for Creators™ · All Rights Reserved<br/>
+  <a href="brain-blueprint-coach.html" style="color:var(--muted);">Back to Coach</a>
+</footer>
+</div>
+
+<script>
+let dnaFileContent = '';
+
+// ── Drag and drop ──
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const fileName = document.getElementById('file-name');
+
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) readFile(file);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) readFile(fileInput.files[0]);
+});
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    dnaFileContent = e.target.result;
+    dropZone.classList.add('has-file');
+    fileName.textContent = `✓ ${file.name} loaded`;
+    document.getElementById('dna-paste').value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── Submit ──
+async function submitDNA() {
+  const email = document.getElementById('input-email').value.trim();
+  const name = document.getElementById('input-name').value.trim();
+  const brainType = document.getElementById('input-type').value;
+  const pasteContent = document.getElementById('dna-paste').value.trim();
+  const dnaText = dnaFileContent || pasteContent;
+
+  if (!email) { alert('Please enter your email address.'); return; }
+  if (!dnaText) { alert('Please upload or paste your 23andMe raw data.'); return; }
+
+  // Show processing
+  document.getElementById('form-state').style.display = 'none';
+  document.getElementById('processing-state').style.display = 'block';
+  document.getElementById('btn-submit').disabled = true;
+
+  try {
+    const response = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/parse-dna', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dnaText, email, name, behavioralType: brainType }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'Processing failed');
+    }
+
+    // Save coach context to localStorage for the coach dashboard
+    localStorage.setItem('bb_dna_profile', JSON.stringify(data.profile));
+    localStorage.setItem('bb_dna_context', data.coachContext);
+    localStorage.setItem('bb_dna_email', email);
+
+    // Update user tier in localStorage
+    const user = JSON.parse(localStorage.getItem('bb_user') || '{}');
+    user.tier = 'dna';
+    localStorage.setItem('bb_user', JSON.stringify(user));
+
+    // Show results
+    showResults(data.profile, data.snpsFound);
+
+  } catch (err) {
+    document.getElementById('processing-state').style.display = 'none';
+    document.getElementById('form-state').style.display = 'block';
+    document.getElementById('btn-submit').disabled = false;
+    alert(`Error: ${err.message}\n\nPlease check your file is a valid 23andMe raw data .txt file and try again.`);
+  }
+}
+
+function showResults(profile, snpsFound) {
+  document.getElementById('processing-state').style.display = 'none';
+  document.getElementById('result-state').style.display = 'block';
+
+  const grid = document.getElementById('gene-grid');
+  grid.innerHTML = '';
+
+  for (const [rsid, data] of Object.entries(profile)) {
+    if (data.genotype === 'Not found') continue;
+    const card = document.createElement('div');
+    card.className = 'gene-card';
+    card.innerHTML = `
+      <div class="gene-name">${data.gene}</div>
+      <div class="gene-trait">${data.trait}</div>
+      <div class="gene-label">${data.label}</div>
+      <div class="gene-detail">${data.detail}</div>
+      <div class="gene-genotype">Genotype: ${data.genotype}</div>
+    `;
+    grid.appendChild(card);
+  }
+}
+</script>
+</body>
+</html>
