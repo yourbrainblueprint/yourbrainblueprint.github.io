@@ -349,9 +349,11 @@ header {
   position: relative; overflow: hidden;
 }
 .plan-cta.standard {
-  background: rgba(0,229,255,0.1);
-  border: 1px solid rgba(0,229,255,0.3);
-  color: var(--accent);
+  background: linear-gradient(135deg, var(--accent3), var(--accent));
+  border: none;
+  color: #fff;
+}
+.plan-cta.standard:hover { opacity: 0.9; transform: translateY(-2px); }
 }
 .plan-cta.standard:hover { background: rgba(0,229,255,0.18); }
 .plan-cta.dna {
