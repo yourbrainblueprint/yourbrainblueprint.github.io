@@ -759,7 +759,7 @@ footer {
         <div class="plan-feature">BDNF — learning & neuroplasticity type</div>
         <div class="plan-feature">FTO — glucose & carb metabolism</div>
       </div>
-      <button class="plan-cta dna" onclick="window.location.href='dna-upgrade-waitlist.html'">
+      <button class="plan-cta dna" onclick="window.location.href='subscribe('dna')">
         <span class="btn-shine"></span>
         Start DNA Precision — $49/mo
       </button>
@@ -883,6 +883,40 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.section').forEach(s => observer.observe(s));
+  
+</script>
+  <script>
+async function subscribe(plan) {
+  const email = document.getElementById('email-input')?.value || '';
+
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+
+  try {
+    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, email }),
+    });
+
+    const { url, error } = await res.json();
+
+    if (error || !url) {
+      alert('Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = plan === 'dna' ? 'Get DNA Precision' : 'Get Started';
+      return;
+    }
+
+    window.location.href = url;
+
+  } catch (err) {
+    alert('Connection error. Please try again.');
+    btn.disabled = false;
+    btn.textContent = plan === 'dna' ? 'Get DNA Precision' : 'Get Started';
+  }
+}
 </script>
 </body>
 </html>
