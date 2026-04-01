@@ -4,6 +4,33 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Brain Blueprint Coach — Your AI Neuroproductivity Coach</title>
+
+<!-- Token gating — runs before anything renders -->
+<script>
+(async function() {
+  const urlToken = new URLSearchParams(window.location.search).get('token');
+  if (urlToken) {
+    localStorage.setItem('bb_token', urlToken);
+    window.history.replaceState({}, '', '/brain-blueprint-coach');
+  }
+
+  const token = localStorage.getItem('bb_token');
+  if (!token) {
+    window.location.href = '/subscribe';
+    return;
+  }
+
+  const res = await fetch('/.netlify/functions/verify-token?token=' + token);
+  const { valid } = await res.json();
+
+  if (!valid) {
+    localStorage.removeItem('bb_token');
+    window.location.href = '/subscribe';
+    return;
+  }
+})();
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
 <style>
 :root {
