@@ -1286,24 +1286,35 @@ function toggleSidebar() {
 async function upgradeToDNA() {
   const btn = document.querySelector('.btn-dna-upgrade');
   btn.disabled = true;
-  btn.textContent = 'Loading...';
+  btn.textContent = 'Upgrading...';
+
+  const token = localStorage.getItem('bb_token');
 
   try {
-    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/create-checkout-session', {
+    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/upgrade-subscription', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: 'dna', email: user.email || '' }),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token,
+      },
     });
 
-    const { url, error } = await res.json();
-    if (error || !url) {
-      alert('Something went wrong. Please try again.');
+    const { success, error } = await res.json();
+
+    if (!success) {
+      alert(error || 'Something went wrong. Please try again.');
       btn.disabled = false;
       btn.textContent = '🧬 Upgrade to DNA Precision — $49/mo';
       return;
     }
 
-    window.location.href = url;
+    // Update local user state to reflect DNA tier
+    const user = JSON.parse(localStorage.getItem('bb_user') || '{}');
+    user.tier = 'dna';
+    localStorage.setItem('bb_user', JSON.stringify(user));
+
+    // Send them to DNA upload page
+    window.location.href = 'dna-upload.html';
 
   } catch (err) {
     alert('Connection error. Please try again.');
