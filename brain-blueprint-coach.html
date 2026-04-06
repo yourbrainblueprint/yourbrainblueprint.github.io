@@ -849,8 +849,8 @@ body {
               <div class="dna-feature-text"><strong>FTO metabolism type</strong>Carb sensitivity and glucose regulation</div>
             </div>
           </div>
-          <button class="btn-dna-upgrade" onclick="window.location.href='dna-upload.html'">
-            🧬 Upgrade to DNA Precision — $49/mo
+          <button class="btn-dna-upgrade" onclick="upgradeToDNA()">
+          🧬 Upgrade to DNA Precision — $49/mo
           </button>
           <div class="dna-price">Already on Standard ($29/mo)? Just pay the $20/mo difference.</div>
         </div>
@@ -1283,7 +1283,34 @@ function switchTab(tab) {
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
+async function upgradeToDNA() {
+  const btn = document.querySelector('.btn-dna-upgrade');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
 
+  try {
+    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: 'dna', email: user.email || '' }),
+    });
+
+    const { url, error } = await res.json();
+    if (error || !url) {
+      alert('Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = '🧬 Upgrade to DNA Precision — $49/mo';
+      return;
+    }
+
+    window.location.href = url;
+
+  } catch (err) {
+    alert('Connection error. Please try again.');
+    btn.disabled = false;
+    btn.textContent = '🧬 Upgrade to DNA Precision — $49/mo';
+  }
+}
 // ═══════════════════════════════════════
 // PERSIST STATE
 // ═══════════════════════════════════════
@@ -1307,6 +1334,7 @@ window.addEventListener('load', () => {
     document.getElementById('ob-role').value = saved.role || '';
   }
 });
+  
 </script>
 </body>
 </html>
