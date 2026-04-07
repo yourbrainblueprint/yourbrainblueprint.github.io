@@ -298,9 +298,10 @@ function readFile(file) {
   const reader = new FileReader();
   reader.onload = (e) => {
     const fullText = e.target.result;
-    // Extract only the 8 relevant SNP lines
+    // Extract only the 11 relevant SNP lines
     const relevantSNPs = ['rs4680', 'rs762551', 'rs1801260', 'rs53576', 
-                          'rs6265', 'rs9939609', 'rs1801133', 'rs1800497'];
+                      'rs6265', 'rs9939609', 'rs1801133', 'rs1800497',
+                      'rs1800955', 'rs6323', 'rs3800373'];
     const lines = fullText.split('\n');
     const filteredLines = lines.filter(line => {
       const rsid = line.split('\t')[0]?.toLowerCase();
