@@ -11,12 +11,12 @@
   const urlToken = new URLSearchParams(window.location.search).get('token');
   if (urlToken) {
     localStorage.setItem('bb_token', urlToken);
-    window.history.replaceState({}, '', '/brain-blueprint-coach');
+    window.history.replaceState({}, '', '/brain-blueprint-coach.html');
   }
 
   const token = localStorage.getItem('bb_token');
   if (!token) {
-    window.location.href = '/subscribe';
+    window.location.href = '/subscribe.html';
     return;
   }
 
@@ -25,7 +25,7 @@
 
   if (!valid) {
     localStorage.removeItem('bb_token');
-    window.location.href = '/subscribe';
+    window.location.href = '/subscribe.html';
     return;
   }
 })();
@@ -763,8 +763,8 @@ body {
     </nav>
 
     <div class="sidebar-footer">
-      <button class="dna-upgrade-btn" id="dna-upgrade-sidebar" onclick="switchTab('dna')">
-        🧬 Upgrade to DNA Precision
+      <button class="dna-upgrade-btn" id="dna-upgrade-sidebar" onclick="upgradeToDNA()">
+      🧬 Upgrade to DNA Precision
       </button>
       <div class="sidebar-meta">Brain Blueprint for Creators™</div>
     </div>
