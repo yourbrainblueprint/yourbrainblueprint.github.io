@@ -589,13 +589,13 @@ footer {
       </div>
     </div>
 
-    <button class="btn-subscribe" id="btn-subscribe" onclick="window.location.href='#subscribe'">
-      Unlock My Brain Blueprint Coach →
-    </button>
+  <button class="btn-subscribe" id="btn-subscribe" onclick="subscribe('standard')">
+    Unlock My Brain Blueprint Coach →
+  </button>
 
-    <button class="btn-dna" id="btn-dna" onclick="window.location.href='subscribe('dna')'">
-      🧬 Add DNA Precision — $49/mo · Upgrade anytime
-    </button>
+  <button class="btn-dna" id="btn-dna" onclick="subscribe('dna')">
+    🧬 Add DNA Precision — $49/mo · Upgrade anytime
+  </button>
 
     <p class="secure-note">256-bit SSL · Powered by Stripe · Cancel anytime</p>
   </div>
@@ -830,8 +830,8 @@ document.getElementById('btn-retake').addEventListener('click', () => {
   <script>
 async function subscribe(plan) {
   const btn = event.currentTarget;
-  btn.disabled = true;
-  btn.textContent = 'Loading...';
+  btn.disabled = false;
+  btn.textContent = plan === 'dna' ? '🧬 Add DNA Precision — $49/mo · Upgrade anytime' : 'Unlock My Brain Blueprint Coach →';
 
   try {
     const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/create-checkout-session', {
