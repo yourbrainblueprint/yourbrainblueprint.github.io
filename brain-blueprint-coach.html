@@ -771,6 +771,9 @@ body {
       <button class="dna-upgrade-btn" id="dna-upgrade-sidebar" onclick="upgradeToDNA()">
       🧬 Upgrade to DNA Precision
       </button>
+      <button class="dna-upgrade-btn" onclick="openBillingPortal()" style="background:rgba(0,229,255,0.05); border-color:rgba(0,229,255,0.15); color:var(--muted);">
+      ⚙️ Manage billing
+    </button>
       <div class="sidebar-meta">Brain Blueprint for Creators™</div>
     </div>
   </aside>
@@ -1338,6 +1341,23 @@ async function upgradeToDNA() {
     alert('Connection error. Please try again.');
     btn.disabled = false;
     btn.textContent = '🧬 Upgrade to DNA Precision — $49/mo';
+  }
+}
+  async function openBillingPortal() {
+  const token = localStorage.getItem('bb_token');
+  try {
+    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/customer-portal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token,
+      },
+    });
+    const { url, error } = await res.json();
+    if (error || !url) { alert('Something went wrong. Please try again.'); return; }
+    window.location.href = url;
+  } catch (err) {
+    alert('Connection error. Please try again.');
   }
 }
 // ═══════════════════════════════════════
