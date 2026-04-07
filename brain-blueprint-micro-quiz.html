@@ -593,7 +593,7 @@ footer {
       Unlock My Brain Blueprint Coach →
     </button>
 
-    <button class="btn-dna" id="btn-dna" onclick="window.location.href='dna-upgrade-waitlist.html'">
+    <button class="btn-dna" id="btn-dna" onclick="window.location.href='subscribe('dna')'">
       🧬 Add DNA Precision — $49/mo · Upgrade anytime
     </button>
 
@@ -826,6 +826,37 @@ document.getElementById('btn-retake').addEventListener('click', () => {
   document.getElementById('progress-wrap').style.display = 'none';
   showScreen('screen-intro');
 });
+</script>
+  <script>
+async function subscribe(plan) {
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+
+  try {
+    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, email: '' }),
+    });
+
+    const { url, error } = await res.json();
+
+    if (error || !url) {
+      alert('Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = '🧬 Add DNA Precision — $49/mo · Upgrade anytime';
+      return;
+    }
+
+    window.location.href = url;
+
+  } catch (err) {
+    alert('Connection error. Please try again.');
+    btn.disabled = false;
+    btn.textContent = '🧬 Add DNA Precision — $49/mo · Upgrade anytime';
+  }
+}
 </script>
 </body>
 </html>
