@@ -294,6 +294,7 @@ fileInput.addEventListener('change', (e) => {
 });
 
 function readFile(file) {
+  console.log('readFile called with:', file.name);
   const reader = new FileReader();
   reader.onload = (e) => {
     dnaFileContent = e.target.result;
