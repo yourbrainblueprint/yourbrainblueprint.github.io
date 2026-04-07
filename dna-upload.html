@@ -185,8 +185,8 @@ footer { margin-top: 60px; padding: 24px; text-align: center; font-family: 'Spac
       </div>
 
       <label class="form-label">Your 23andMe raw data file</label>
-      <div class="drop-zone" id="drop-zone">
-        <input type="file" id="file-input" accept=".txt,.zip" />
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" accept=".txt,.zip" style="display:none;" />
         <div class="dz-icon">🧬</div>
         <div class="dz-title">Drop your file here</div>
         <div class="dz-sub">23andMe raw data .txt file<br/>or click to browse</div>
