@@ -1036,7 +1036,20 @@ function initApp() {
   // Update sidebar
   document.getElementById('sidebar-type').textContent = user.brainType;
   document.getElementById('sidebar-name').textContent = `— ${user.name}`;
-
+  
+// Sync tier badge from localStorage (set by token gate)
+const freshUser = loadUser();
+if (freshUser?.tier) {
+  user.tier = freshUser.tier;
+}
+const tierBadge = document.getElementById('tier-badge');
+if (user.tier === 'dna') {
+  tierBadge.textContent = 'DNA Precision · $49/mo';
+  tierBadge.classList.add('dna');
+  document.getElementById('dna-upgrade-sidebar').classList.add('hidden');
+} else {
+  tierBadge.textContent = 'Standard · $29/mo';
+}
   // Build protocol panel
   buildProtocol();
 
