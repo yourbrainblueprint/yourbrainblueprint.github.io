@@ -20,17 +20,22 @@
     return;
   }
 
-  const res = await fetch('/.netlify/functions/verify-token?token=' + token);
-  const { valid } = await res.json();
+  const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/verify-token?token=' + token);
+  const { valid, plan, email } = await res.json();
 
   if (!valid) {
     localStorage.removeItem('bb_token');
     window.location.href = '/subscribe.html';
     return;
   }
+
+  // Sync plan from server to localStorage so it's always accurate
+  const saved = JSON.parse(localStorage.getItem('bb_user') || '{}');
+  saved.tier = plan;
+  localStorage.setItem('bb_user', JSON.stringify(saved));
+
 })();
 </script>
-
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
 <style>
 :root {
