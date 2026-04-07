@@ -297,7 +297,17 @@ function readFile(file) {
   console.log('readFile called with:', file.name);
   const reader = new FileReader();
   reader.onload = (e) => {
-    dnaFileContent = e.target.result;
+    const fullText = e.target.result;
+    // Extract only the 8 relevant SNP lines
+    const relevantSNPs = ['rs4680', 'rs762551', 'rs1801260', 'rs53576', 
+                          'rs6265', 'rs9939609', 'rs1801133', 'rs1800497'];
+    const lines = fullText.split('\n');
+    const filteredLines = lines.filter(line => {
+      const rsid = line.split('\t')[0]?.toLowerCase();
+      return line.startsWith('#') || line.startsWith('rsid') || relevantSNPs.includes(rsid);
+    });
+    dnaFileContent = filteredLines.join('\n');
+    console.log('Filtered DNA content lines:', filteredLines.length);
     dropZone.classList.add('has-file');
     fileName.textContent = `✓ ${file.name} loaded`;
     document.getElementById('dna-paste').value = '';
