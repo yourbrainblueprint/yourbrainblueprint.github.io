@@ -308,6 +308,9 @@ function readFile(file) {
     });
     dnaFileContent = filteredLines.join('\n');
     console.log('Filtered DNA content lines:', filteredLines.length);
+    console.log('Filtered content size (bytes):', new Blob([dnaFileContent]).size);
+    console.log('Filtered lines:', filteredLines.length);
+    console.log('Filtered content preview:', dnaFileContent.substring(0, 200));
     dropZone.classList.add('has-file');
     fileName.textContent = `✓ ${file.name} loaded`;
     document.getElementById('dna-paste').value = '';
