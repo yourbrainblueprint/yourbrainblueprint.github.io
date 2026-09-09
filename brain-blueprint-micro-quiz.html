@@ -352,6 +352,48 @@ h1 .grad {
 }
 .insight-sub strong { color: var(--text); }
 
+/* Email capture — soft ask */
+.capture-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 32px;
+  position: relative; overflow: hidden;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.capture-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+}
+.capture-title { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.capture-desc { font-size: 13px; color: #8aafcc; line-height: 1.65; margin-bottom: 18px; }
+.capture-desc strong { color: var(--text); }
+.capture-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.capture-input {
+  flex: 1; min-width: 200px;
+  background: rgba(5,10,18,0.8);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 13px 16px;
+  font-family: 'Syne', sans-serif; font-size: 14px; color: var(--text);
+  outline: none; transition: border-color 0.2s;
+}
+.capture-input:focus { border-color: var(--accent); }
+.capture-input::placeholder { color: var(--muted); }
+.btn-capture {
+  padding: 13px 22px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: #fff; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.btn-capture:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-capture:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.capture-skip {
+  font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em;
+}
+
 /* Lock card — what's gated */
 .lock-card {
   background: var(--surface);
@@ -475,7 +517,7 @@ footer {
 
 @media (max-width: 540px) {
   .locked-items { grid-template-columns: 1fr; }
-  .question-card, .insight-card, .lock-card { padding: 24px 18px; }
+  .question-card, .insight-card, .lock-card, .capture-card { padding: 24px 18px; }
   .price-banner { flex-direction: column; text-align: center; }
   .price-includes span { justify-content: center; }
 }
@@ -556,6 +598,7 @@ footer {
     <div class="insight-text" id="insight-headline"></div>
     <div class="insight-sub" id="insight-body"></div>
   </div>
+
   <!-- Email capture — soft ask -->
   <div class="capture-card" id="capture-card">
     <div class="capture-title">Want the full breakdown?</div>
@@ -566,46 +609,7 @@ footer {
     </form>
     <p class="capture-skip">No spam. Unsubscribe anytime. Or skip this and keep reading below ↓</p>
   </div>
-  .capture-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px 32px;
-  position: relative; overflow: hidden;
-  margin-bottom: 20px;
-  text-align: left;
-}
-.capture-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
-}
-.capture-title { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-.capture-desc { font-size: 13px; color: #8aafcc; line-height: 1.65; margin-bottom: 18px; }
-.capture-desc strong { color: var(--text); }
-.capture-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-.capture-input {
-  flex: 1; min-width: 200px;
-  background: rgba(5,10,18,0.8);
-  border: 1px solid var(--border);
-  border-radius: 10px; padding: 13px 16px;
-  font-family: 'Syne', sans-serif; font-size: 14px; color: var(--text);
-  outline: none; transition: border-color 0.2s;
-}
-.capture-input:focus { border-color: var(--accent); }
-.capture-input::placeholder { color: var(--muted); }
-.btn-capture {
-  padding: 13px 22px; border: none; border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent2), var(--accent));
-  color: #fff; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
-  cursor: pointer; white-space: nowrap;
-  transition: opacity 0.2s, transform 0.15s;
-}
-.btn-capture:hover { opacity: 0.9; transform: translateY(-2px); }
-.btn-capture:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.capture-skip {
-  font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em;
-}
+
   <!-- Gated content -->
   <div class="lock-card">
     <div class="lock-header">
@@ -751,20 +755,15 @@ const TYPES = {
 // SCORING
 // ═══════════════════════════════════════
 function calculateType(answers) {
-  // answers[0] = Q1 choice index (0–4)
-  // Map to letter scores for compatibility
   const a = answers; // array of 0–4
 
-  // Dopamine signals
   const dopFast = (a[1] <= 1) + (a[2] === 0 || a[2] === 4) + (a[4] === 0 || a[4] === 3);
   const dopSlow = (a[1] >= 2) + (a[2] === 1) + (a[4] === 1);
   const dopBal  = (a[1] === 1) + (a[2] === 2) + (a[4] === 2);
 
-  // Stress signals
   const stressHigh = (a[3] <= 2 || a[3] === 4);
   const stressLow  = (a[3] === 3);
 
-  // Novelty signal
   const novelty = a[4] === 3 || a[2] === 4;
 
   const scores = {
@@ -775,7 +774,6 @@ function calculateType(answers) {
     'Balanced Creator':     (dopBal >= 1 ? 1 : 0)  + (a[4] === 2 ? 2 : 0) + (a[2] === 2 ? 1 : 0),
   };
 
-  // Q5 (index 4) tiebreak
   const q5map = { 0: 'Strategic Sprinter', 1: 'Deep Focus Architect', 2: 'Balanced Creator', 3: 'Dynamic Innovator' };
   const sorted = Object.entries(scores).sort((x,y) => y[1] - x[1]);
   if (sorted[0][1] === sorted[1][1] && q5map[a[4]]) return q5map[a[4]];
@@ -849,7 +847,6 @@ function showResult() {
 // ═══════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════
-
 document.getElementById('capture-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('capture-email').value.trim();
@@ -875,8 +872,8 @@ document.getElementById('capture-form').addEventListener('submit', async (e) => 
     btn.textContent = 'Send Me My Full Blueprint';
     alert('Something went wrong. Please try again.');
   }
-});  
-  
+});
+
 document.getElementById('btn-begin').addEventListener('click', () => {
   document.getElementById('progress-wrap').style.display = 'block';
   showScreen('screen-quiz');
@@ -916,7 +913,7 @@ async function subscribe(plan) {
     const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan, email: '' }),
+      body: JSON.stringify({ plan, email: state.capturedEmail || '' }),
     });
 
     const { url, error } = await res.json();
