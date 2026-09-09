@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,8 +51,6 @@ body {
   display: flex; flex-direction: column; align-items: center;
   padding-bottom: 100px;
 }
-
-/* ── Header ── */
 header {
   width: 100%; padding: 28px 24px 0;
   display: flex; justify-content: center;
@@ -76,14 +75,10 @@ header {
   0%,100% { opacity:1; transform:scale(1); }
   50% { opacity:0.4; transform:scale(0.7); }
 }
-
-/* ── Section wrapper ── */
 .section {
   width: 100%; max-width: 720px;
   padding: 0 24px;
 }
-
-/* ── HERO ── */
 .hero {
   text-align: center;
   padding-top: 60px;
@@ -110,8 +105,6 @@ header {
   margin: 0 auto 36px;
 }
 .hero-desc strong { color: var(--text); }
-
-/* Quiz result callout */
 .result-callout {
   background: rgba(0,229,255,0.05);
   border: 1px solid rgba(0,229,255,0.2);
@@ -127,8 +120,6 @@ header {
   background: var(--accent); flex-shrink: 0;
   animation: pulse-dot 2s ease-in-out infinite;
 }
-
-/* ── DIVIDER ── */
 .divider {
   display: flex; align-items: center; gap: 16px;
   margin: 52px auto; max-width: 420px; padding: 0 24px;
@@ -137,8 +128,6 @@ header {
 }
 .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
 .divider-icon { font-size: 16px; }
-
-/* ── PROBLEM SECTION ── */
 .problem-section { animation: fadeUp 0.9s 0.15s ease both; }
 .section-label {
   font-family: 'Space Mono', monospace;
@@ -162,7 +151,6 @@ header {
   color: var(--text); margin-bottom: 6px;
 }
 .problem-card .pc-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
-
 .problem-statement {
   background: rgba(239,68,68,0.06);
   border: 1px solid rgba(239,68,68,0.2);
@@ -171,8 +159,6 @@ header {
   line-height: 1.7; text-align: center;
 }
 .problem-statement strong { color: #fca5a5; }
-
-/* ── SOLUTION SECTION ── */
 .solution-section { animation: fadeUp 0.9s 0.2s ease both; }
 .solution-intro {
   text-align: center; margin-bottom: 32px;
@@ -187,8 +173,6 @@ header {
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .solution-desc { font-size: 14px; color: #8aafcc; line-height: 1.7; max-width: 520px; margin: 0 auto; }
-
-/* What's inside */
 .inside-grid {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 12px; margin-bottom: 16px;
@@ -220,8 +204,6 @@ header {
   letter-spacing: 0.08em; text-transform: uppercase;
   margin-bottom: 8px;
 }
-
-/* ── DIFFERENTIATOR ── */
 .diff-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -258,8 +240,6 @@ header {
   text-align: center;
   font-size: 14px; color: var(--muted);
 }
-
-/* ── SOCIAL PROOF ── */
 .proof-section { animation: fadeUp 0.9s 0.25s ease both; }
 .testimonial-grid {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -289,8 +269,6 @@ header {
   font-size: 9px; color: var(--accent);
   margin-top: 6px; letter-spacing: 0.06em;
 }
-
-/* ── PRICING ── */
 .pricing-section { animation: fadeUp 0.9s 0.3s ease both; }
 .pricing-grid {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -353,9 +331,7 @@ header {
   border: none;
   color: #fff;
 }
-.plan-cta.standard:hover { opacity: 0.9; transform: translateY(-2px); }
-}
-.plan-cta.standard:hover { background: rgba(0,229,255,0.18); }
+.plan-cta.standard:hover { opacity: 0.9; transform: translateY(-2px); background: rgba(0,229,255,0.18); }
 .plan-cta.dna {
   background: linear-gradient(135deg, var(--accent2), var(--accent));
   color: #fff;
@@ -378,8 +354,6 @@ header {
   letter-spacing: 0.08em; text-transform: uppercase;
   margin-bottom: 12px;
 }
-
-/* Guarantee */
 .guarantee {
   background: rgba(16,185,129,0.06);
   border: 1px solid rgba(16,185,129,0.2);
@@ -389,8 +363,6 @@ header {
 .guarantee-icon { font-size: 28px; flex-shrink: 0; }
 .guarantee-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .guarantee-desc { font-size: 12px; color: #8aafcc; line-height: 1.6; }
-
-/* ── FAQ ── */
 .faq-section { animation: fadeUp 0.9s 0.35s ease both; }
 .faq-list { display: flex; flex-direction: column; gap: 10px; }
 .faq-item {
@@ -414,8 +386,6 @@ header {
   transition: max-height 0.3s ease, padding 0.3s ease;
 }
 .faq-item.open .faq-a { max-height: 300px; padding: 0 20px 16px; }
-
-/* ── FINAL CTA ── */
 .final-cta {
   text-align: center;
   animation: fadeUp 0.9s 0.4s ease both;
@@ -475,8 +445,6 @@ header {
   font-size: 10px; color: var(--muted);
   letter-spacing: 0.05em; margin-top: 6px;
 }
-
-/* Section heading utility */
 .section-heading {
   font-size: clamp(1.4rem, 4vw, 2rem);
   font-weight: 800; line-height: 1.2;
@@ -491,8 +459,6 @@ header {
   line-height: 1.7; max-width: 500px;
   margin: 0 auto 28px; text-align: center;
 }
-
-/* Footer */
 footer {
   margin-top: 64px; padding: 28px 24px;
   text-align: center;
@@ -500,8 +466,6 @@ footer {
   font-size: 10px; color: var(--muted);
   letter-spacing: 0.08em; opacity: 0.6;
 }
-
-/* Animations */
 @keyframes fadeUp {
   from { opacity:0; transform:translateY(22px); }
   to { opacity:1; transform:translateY(0); }
@@ -510,7 +474,6 @@ footer {
   from { opacity:0; transform:translateY(-12px); }
   to { opacity:1; transform:translateY(0); }
 }
-
 @media (max-width: 600px) {
   .problem-grid, .inside-grid, .pricing-grid, .testimonial-grid { grid-template-columns: 1fr; }
   .diff-row { grid-template-columns: 1fr; }
@@ -531,7 +494,6 @@ footer {
   </div>
 </header>
 
-<!-- ═══ HERO ═══ -->
 <section class="section hero">
   <p class="eyebrow">🧠 Your AI Neuroproductivity Coach</p>
   <h1>
@@ -554,7 +516,6 @@ footer {
   <p class="cta-note" style="margin-top:12px;">From $29/mo · Cancel anytime · No sales calls</p>
 </section>
 
-<!-- ═══ PROBLEM ═══ -->
 <div class="divider section"><div class="divider-line"></div><div class="divider-icon">⚡</div><div class="divider-line"></div></div>
 
 <section class="section problem-section">
@@ -591,7 +552,6 @@ footer {
   </div>
 </section>
 
-<!-- ═══ SOLUTION ═══ -->
 <div class="divider section"><div class="divider-line"></div><div class="divider-icon">🧠</div><div class="divider-line"></div></div>
 
 <section class="section solution-section">
@@ -641,7 +601,6 @@ footer {
   </div>
 </section>
 
-<!-- ═══ BEFORE / AFTER ═══ -->
 <div class="divider section"><div class="divider-line"></div><div class="divider-icon">🔄</div><div class="divider-line"></div></div>
 
 <section class="section">
@@ -679,7 +638,6 @@ footer {
   </div>
 </section>
 
-<!-- ═══ SOCIAL PROOF ═══ -->
 <div class="divider section"><div class="divider-line"></div><div class="divider-icon">✦</div><div class="divider-line"></div></div>
 
 <section class="section proof-section">
@@ -709,7 +667,6 @@ footer {
   </div>
 </section>
 
-<!-- ═══ PRICING ═══ -->
 <div class="divider section"><div class="divider-line"></div><div class="divider-icon">💎</div><div class="divider-line"></div></div>
 
 <section class="section pricing-section" id="pricing">
@@ -718,7 +675,6 @@ footer {
   <p class="section-sub">Both plans include your complete neuroproductivity protocol and AI coaching chat. DNA Precision adds your genetic layer.</p>
 
   <div class="pricing-grid">
-    <!-- Standard -->
     <div class="pricing-card">
       <div class="plan-name">Brain Blueprint Coach</div>
       <div class="plan-price">
@@ -742,7 +698,6 @@ footer {
       </button>
     </div>
 
-    <!-- DNA -->
     <div class="pricing-card featured">
       <div class="most-popular">✦ Most complete</div>
       <div class="plan-name">Brain Blueprint Coach · DNA Precision</div>
@@ -768,7 +723,6 @@ footer {
     </div>
   </div>
 
-  <!-- Guarantee -->
   <div class="guarantee">
     <div class="guarantee-icon">🛡️</div>
     <div>
@@ -778,7 +732,6 @@ footer {
   </div>
 </section>
 
-<!-- ═══ FAQ ═══ -->
 <div class="divider section"><div class="divider-line"></div><div class="divider-icon">❓</div><div class="divider-line"></div></div>
 
 <section class="section faq-section">
@@ -830,7 +783,6 @@ footer {
   </div>
 </section>
 
-<!-- ═══ FINAL CTA ═══ -->
 <div class="divider section"><div class="divider-line"></div><div class="divider-icon">🧠</div><div class="divider-line"></div></div>
 
 <section class="section final-cta">
@@ -855,7 +807,7 @@ footer {
 <footer>
   © 2026 Brain Blueprint for Creators™ · All Rights Reserved<br/><br/>
   <a href="brain-blueprint-micro-quiz.html" style="color:var(--muted);">Free Quiz</a> ·
-  <a href="dna-upgrade-waitlist.html" style="color:var(--muted);">DNA Precision</a> ·
+  <a href="#pricing" style="color:var(--muted);">DNA Precision</a> ·
   <a href="brain-blueprint-coach.html" style="color:var(--muted);">Coach Dashboard</a>
 </footer>
 </div>
@@ -864,13 +816,10 @@ footer {
 function toggleFaq(el) {
   const item = el.parentElement;
   const isOpen = item.classList.contains('open');
-  // Close all
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-  // Open this one if it wasn't open
   if (!isOpen) item.classList.add('open');
 }
 
-// Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
@@ -878,16 +827,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// Animate sections on scroll
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) e.target.style.opacity = '1';
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.section').forEach(s => observer.observe(s));
-  
 </script>
-  <script>
+<script>
 async function subscribe(plan) {
   const email = document.getElementById('email-input')?.value || '';
 
