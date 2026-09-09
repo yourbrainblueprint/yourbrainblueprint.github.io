@@ -863,7 +863,7 @@ body {
           <button class="btn-dna-upgrade" onclick="upgradeToDNA()">
           🧬 Upgrade to DNA Precision — $49/mo
           </button>
-          <div class="dna-price">Already on Standard ($29/mo)? Just pay the $20/mo difference.</div>
+          <div class="dna-price">Already on Behavioral Blueprint ($29/mo)? Just pay the $20/mo difference.</div>
         </div>
       </div>
 
@@ -1051,13 +1051,13 @@ if (freshUser?.tier) {
 const tierBadge = document.getElementById('tier-badge');
 const dnaNavBadge = document.getElementById('dna-nav-badge');
 if (user.tier === 'dna') {
-  tierBadge.textContent = 'DNA Precision · $49/mo';
+  tierBadge.textContent = 'Genetic Blueprint · $49/mo';
   tierBadge.classList.add('dna');
   document.getElementById('dna-upgrade-sidebar').classList.add('hidden');
   dnaNavBadge.textContent = 'Active';
   dnaNavBadge.classList.add('active-badge');
 } else {
-  tierBadge.textContent = 'Standard · $29/mo';
+  tierBadge.textContent = 'Behavioral Blueprint · $29/mo';
   dnaNavBadge.textContent = 'Upgrade';
   dnaNavBadge.classList.remove('active-badge');
 }
@@ -1158,7 +1158,7 @@ BRAIN TYPE: ${user.brainType}
 PEAK WINDOW: ${user.peakTime}
 BIGGEST CHALLENGE: ${user.challenge}
 WHAT THEY BUILD/CREATE: ${user.role}
-SUBSCRIPTION TIER: ${user.tier === 'dna' ? 'DNA Precision ($49/mo) — full genetic data available' : 'Standard ($29/mo) — behavioral profile only'}
+SUBSCRIPTION TIER: ${user.tier === 'dna' ? 'Genetic Blueprint ($49/mo) — full genetic data available' : 'Behavioral Blueprint ($29/mo) — behavioral profile only'}
 
 THEIR SPECIFIC PROTOCOL:
 - Peak label: ${p.peakLabel} — ${p.peakValue} (${p.peakSub})
