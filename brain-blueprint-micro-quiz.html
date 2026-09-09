@@ -556,7 +556,56 @@ footer {
     <div class="insight-text" id="insight-headline"></div>
     <div class="insight-sub" id="insight-body"></div>
   </div>
-
+  <!-- Email capture — soft ask -->
+  <div class="capture-card" id="capture-card">
+    <div class="capture-title">Want the full breakdown?</div>
+    <div class="capture-desc">Your type is just the headline. I'll send you the full protocol for <strong id="capture-type-name">your type</strong> — plus the one thing about your specific wiring most people get wrong — straight to your inbox.</div>
+    <form id="capture-form" class="capture-form">
+      <input type="email" id="capture-email" class="capture-input" placeholder="you@email.com" required />
+      <button type="submit" class="btn-capture" id="btn-capture">Send Me My Full Blueprint</button>
+    </form>
+    <p class="capture-skip">No spam. Unsubscribe anytime. Or skip this and keep reading below ↓</p>
+  </div>
+  .capture-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 32px;
+  position: relative; overflow: hidden;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.capture-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+}
+.capture-title { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.capture-desc { font-size: 13px; color: #8aafcc; line-height: 1.65; margin-bottom: 18px; }
+.capture-desc strong { color: var(--text); }
+.capture-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.capture-input {
+  flex: 1; min-width: 200px;
+  background: rgba(5,10,18,0.8);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 13px 16px;
+  font-family: 'Syne', sans-serif; font-size: 14px; color: var(--text);
+  outline: none; transition: border-color 0.2s;
+}
+.capture-input:focus { border-color: var(--accent); }
+.capture-input::placeholder { color: var(--muted); }
+.btn-capture {
+  padding: 13px 22px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: #fff; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.btn-capture:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-capture:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.capture-skip {
+  font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em;
+}
   <!-- Gated content -->
   <div class="lock-card">
     <div class="lock-header">
@@ -787,10 +836,12 @@ function renderQuestion(qIdx) {
 
 function showResult() {
   const type = calculateType(state.answers);
+  state.resultType = type;
   const info = TYPES[type];
   document.getElementById('result-name').textContent = type;
   document.getElementById('insight-headline').textContent = info.headline;
   document.getElementById('insight-body').innerHTML = info.body;
+  document.getElementById('capture-type-name').textContent = type;
   document.getElementById('progress-wrap').style.display = 'none';
   showScreen('screen-result');
 }
@@ -798,6 +849,34 @@ function showResult() {
 // ═══════════════════════════════════════
 // EVENT LISTENERS
 // ═══════════════════════════════════════
+
+document.getElementById('capture-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('capture-email').value.trim();
+  if (!email) return;
+  const btn = document.getElementById('btn-capture');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    const res = await fetch('https://brain-blueprint-stripe.netlify.app/.netlify/functions/capture-quiz-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, brainType: state.resultType }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Something went wrong');
+
+    state.capturedEmail = email;
+    document.getElementById('capture-card').innerHTML =
+      '<div class="capture-title">✓ Check your inbox</div><div class="capture-desc">Your full breakdown is on its way to ' + email + '.</div>';
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Send Me My Full Blueprint';
+    alert('Something went wrong. Please try again.');
+  }
+});  
+  
 document.getElementById('btn-begin').addEventListener('click', () => {
   document.getElementById('progress-wrap').style.display = 'block';
   showScreen('screen-quiz');
